@@ -257,8 +257,17 @@ static void scan_callback_caloe(eb_user_data_t user, eb_device_t dev, const stru
       br.addr_last  = des->bridge.sdb_component.addr_last;
 
       eb_sdb_scan_bus(dev, &des->bridge, &br, &scan_callback_caloe);
-      while (!br.stop) 
+      
+      while (!br.stop) {
 		eb_socket_run(eb_device_socket(dev),TIMEOUT_LIMIT);
+		
+		//if(TIMEOUT_LIMIT != -1) 
+		//	break;
+	  }
+	  
+	  if(!br.stop) {	
+		fprintf(stderr, "ERROR: Timeout expired! \n");
+	  }
     }
   }
   }
@@ -634,10 +643,13 @@ int read_caloe(access_caloe * access) {
     
   stop = 0;
   
-  while(!stop) 
+  while(!stop) {
 	eb_socket_run(socket, TIMEOUT_LIMIT);
+	
+	if(TIMEOUT_LIMIT != -1)
+		break;
+  }
   
-
   if(!stop) {	
     fprintf(stderr, "ERROR: Timeout expired! \n");
     return ERROR_TIMEOUT;
@@ -907,8 +919,12 @@ int write_caloe(access_caloe * access) {
       
       stop = 0;
       
-      while(!stop) 
+      while(!stop) {
 		eb_socket_run(socket, TIMEOUT_LIMIT);
+		
+		if(TIMEOUT_LIMIT != -1)
+			break;
+	 }
 	  
 
   if(!stop) {	
@@ -946,8 +962,12 @@ int write_caloe(access_caloe * access) {
   
   stop = 0;
   
-  while(!stop)  
+  while(!stop) {
 	eb_socket_run(socket, TIMEOUT_LIMIT);
+	
+	if(TIMEOUT_LIMIT != -1)
+		break;
+  }
 
   if(!stop) {	
     fprintf(stderr, "ERROR %d: Timeout expired! \n",(int) status);
@@ -1055,8 +1075,12 @@ int scan_caloe(access_caloe * access) {
   if (!verbose)
     fprintf(stdout, "BusPath        VendorID         Product   BaseAddress(Hex)  Description\n");
   
-  while (!br.stop) 
+  while (!br.stop) {
     eb_socket_run(socket,TIMEOUT_LIMIT);
+    
+    //if(TIMEOUT_LIMIT != -1)
+	//	break;
+  }
 
   if(!br.stop) {	
     fprintf(stderr, "ERROR: Timeout expired! \n");
