@@ -73,6 +73,9 @@
 /// Timeout (ms) to read/write operations (-1: NOT LIMITED)
 #define TIMEOUT_LIMIT -1
 
+/// Time gap between access (usecs, 0: no-wait)
+#define SLEEP_ACCESS 0
+
 /// Verbose mode (0: disabled, 1: enabled)
 #define VERBOSE_CALOE 0
 

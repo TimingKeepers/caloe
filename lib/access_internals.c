@@ -1377,9 +1377,16 @@ int execute_tools_caloe(access_caloe * access) {
 }
 
 int execute_caloe(access_caloe * access) {
+	int rcode;
+	
 	if (! EXECUTE_CALOE_MODE)
-		return execute_native_caloe(access);
+		rcode = execute_native_caloe(access);
 	else {
-		return execute_tools_caloe(access);
+		rcode = execute_tools_caloe(access);
 	}
+	
+	if(SLEEP_ACCESS != 0)
+		usleep(SLEEP_ACCESS);
+	
+	return rcode;
 }
