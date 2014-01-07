@@ -378,6 +378,7 @@ int main ()
 															}
 															else {
 																if(cmd == "vuart") {
+																	 cout << "WARNING: Vuart is under testing!!"<<endl;
 																	 if(!specific_dio_b) {
 																		cout <<endl<<"IP: ";
 																		cin >> ip;
