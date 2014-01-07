@@ -37,7 +37,10 @@ static void read_callback_caloe(eb_user_data_t user, eb_device_t dev, eb_operati
   	*stop = 1;
 
 	if (status != EB_OK) {
-    		fprintf(stderr, "ERROR: Etherbone cycle failed! \n");
+		
+			if(VERBOSE_CALOE)
+				fprintf(stderr, "ERROR: Etherbone cycle failed! \n");
+    		
     		return;
 		//exit(1);
 	}
@@ -47,9 +50,12 @@ static void read_callback_caloe(eb_user_data_t user, eb_device_t dev, eb_operati
       			data <<= (eb_operation_format(op) & EB_DATAX) * 8;
       			data |= eb_operation_data(op);
 
-      			if (eb_operation_had_error(op))
-        			fprintf(stderr, "ERROR: Segmentation fault reading %s %s bits from address 0x%"EB_ADDR_FMT"\n",eb_width_data(eb_operation_format(op)),
+      			if (eb_operation_had_error(op)) {
+        			
+        			if(VERBOSE_CALOE) 
+						fprintf(stderr, "ERROR: Segmentation fault reading %s %s bits from address 0x%"EB_ADDR_FMT"\n",eb_width_data(eb_operation_format(op)),
                         eb_format_endian(eb_operation_format(op)), eb_operation_address(op));
+				}
     		}
   	}
 
@@ -65,21 +71,25 @@ static void write_callback_caloe(eb_user_data_t user, eb_device_t dev, eb_operat
   *stop = 1;
 
   if (status != EB_OK) {
-    		fprintf(stderr, "ERROR: Etherbone cycle failed! \n");
+			if(VERBOSE_CALOE) 
+				fprintf(stderr, "ERROR: Etherbone cycle failed! \n");
     		return;
+    		
 		//exit(1);
    }
    else {
 	data = 0;
 	for (; op != EB_NULL; op = eb_operation_next(op)) {
 
-	if (eb_operation_had_error(op))
-		fprintf(stderr, "ERROR: wishbone segfault %s %s %s bits to address 0x%"EB_ADDR_FMT"\n",
-		eb_operation_is_read(op)?"reading":"writing",
+	if (eb_operation_had_error(op)) {
+		
+		if(VERBOSE_CALOE) 
+			fprintf(stderr, "ERROR: wishbone segfault %s %s %s bits to address 0x%"EB_ADDR_FMT"\n",
+				eb_operation_is_read(op)?"reading":"writing",
                 eb_width_data(eb_operation_format(op)),
                 eb_format_endian(eb_operation_format(op)),
                 eb_operation_address(op));
-
+	}
 
   	}
    }
@@ -149,7 +159,10 @@ static void scan_callback_caloe(eb_user_data_t user, eb_device_t dev, const stru
   br.parent->stop = 1;
 
   if (status != EB_OK) {
-    fprintf(stderr, "ERROR: failed to retrieve SDB: %s\n", eb_status(status));
+	
+	if(VERBOSE_CALOE)
+		fprintf(stderr, "ERROR: failed to retrieve SDB: %s\n", eb_status(status));
+    
     return;
     //exit(1);
   }
@@ -265,8 +278,9 @@ static void scan_callback_caloe(eb_user_data_t user, eb_device_t dev, const stru
 		//	break;
 	  }
 	  
-	  if(!br.stop) {	
-		fprintf(stderr, "ERROR: Timeout expired! \n");
+	  if(!br.stop) {
+		if(VERBOSE_CALOE)	
+			fprintf(stderr, "ERROR: Timeout expired! \n");
 	  }
     }
   }
@@ -431,7 +445,10 @@ int read_caloe(access_caloe * access) {
   int shift;
   
   if(access->mode != READ) {
-      fprintf(stderr,"ERROR: Invalid read operation \n");
+	  
+	  if(VERBOSE_CALOE)
+		fprintf(stderr,"ERROR: Invalid read operation \n");
+      
       return INVALID_OPERATION;
   }
   
@@ -473,12 +490,18 @@ int read_caloe(access_caloe * access) {
   mask >>= (sizeof(eb_data_t)-size)*8;
 
   if ((status = eb_socket_open(EB_ABI_CODE, 0, address_width|data_width, &socket)) != EB_OK) {
-    fprintf(stderr, "ERROR %d: Could not connect Etherbone socket \n",(int) status);
+	
+	if(VERBOSE_CALOE)
+		fprintf(stderr, "ERROR %d: Could not connect Etherbone socket \n",(int) status);
+    
     return ERROR_OPEN_SOCKET;
   }
   
   if ((status = eb_device_open(socket, net, EB_ADDRX|EB_DATAX, attempts, &device)) != EB_OK) {
-    fprintf(stderr, "ERROR %d: Could not connect Etherbone device \n", (int) status);
+	  
+	if(VERBOSE_CALOE)
+		fprintf(stderr, "ERROR %d: Could not connect Etherbone device \n", (int) status);
+    
     return ERROR_OPEN_DEVICE;
   }
   
@@ -488,7 +511,10 @@ int read_caloe(access_caloe * access) {
    
     struct sdb_device info;
     if ((status = eb_sdb_find_by_address(device, address, &info)) != EB_OK) {
-      fprintf(stderr, "ERROR %d: SDB scan failed! \n",(int) status);
+		
+	  if(VERBOSE_CALOE)
+		fprintf(stderr, "ERROR %d: SDB scan failed! \n",(int) status);
+      
       return ERROR_SDB_SCAN;
     }
     
@@ -517,13 +543,19 @@ int read_caloe(access_caloe * access) {
     
   /* We cannot work with a device that requires larger access than we support */
   if (read_sizes == 0) {
-    fprintf(stderr, "ERROR: Device could not access with size requested \n");
+	  
+	if(VERBOSE_CALOE)
+		fprintf(stderr, "ERROR: Device could not access with size requested \n");
+    
     return ERROR_SIZE_NOT_SUPPORTED;
   }
   
   /* Begin the cycle */
   if ((status = eb_cycle_open(device, &stop, &read_callback_caloe, &cycle)) != EB_OK) {
-    fprintf(stderr, "ERROR %d: Could not create a new Etherbone operation cycle \n",(int) status);
+	  
+	if(VERBOSE_CALOE)
+		fprintf(stderr, "ERROR %d: Could not create a new Etherbone operation cycle \n",(int) status);
+    
     return ERROR_OPEN_CYCLE;
   }
   
@@ -570,7 +602,10 @@ int read_caloe(access_caloe * access) {
         stride = -chunk;
         break;
       default:
-        fprintf(stderr, "ERROR: Must know ENDIAN to fragment read \n");
+		
+		if(VERBOSE_CALOE)
+			fprintf(stderr, "ERROR: Must know ENDIAN to fragment read \n");
+        
         return ERROR_UNKNOWN_ENDIAN;
       }
       
@@ -612,7 +647,10 @@ int read_caloe(access_caloe * access) {
         shift = (address - aligned_address);
         break;
       default:
-        fprintf(stderr, "ERROR: Must know ENDIAN to fill partial read \n");
+      
+		if(VERBOSE_CALOE)
+			fprintf(stderr, "ERROR: Must know ENDIAN to fill partial read \n");
+        
         return ERROR_UNKNOWN_ENDIAN;
       }
       
@@ -628,7 +666,10 @@ int read_caloe(access_caloe * access) {
     
     /* If the access it full width, an endian is needed. Print a friendlier message than EB_ADDRESS. */
     if ((format & line_width & EB_DATAX) == 0 && (format & EB_ENDIAN_MASK) == 0) {
-	fprintf(stderr, "ERROR: ENDIAN is required \n");
+		
+		if(VERBOSE_CALOE)
+			fprintf(stderr, "ERROR: ENDIAN is required \n");
+        
         return ERROR_UNKNOWN_ENDIAN;
     }
     
@@ -651,7 +692,10 @@ int read_caloe(access_caloe * access) {
   }
   
   if(!stop) {	
-    fprintf(stderr, "ERROR: Timeout expired! \n");
+	
+	if(VERBOSE_CALOE)
+		fprintf(stderr, "ERROR: Timeout expired! \n");
+    
     return ERROR_TIMEOUT;
   }
   
@@ -659,12 +703,18 @@ int read_caloe(access_caloe * access) {
   data &= mask;
   
   if ((status = eb_device_close(device)) != EB_OK) {
-    fprintf(stderr, "ERROR %d: failed to close Etherbone device \n", (int) status);
+	  
+	if(VERBOSE_CALOE)
+		fprintf(stderr, "ERROR %d: failed to close Etherbone device \n", (int) status);
+    
     return ERROR_CLOSE_DEVICE;
   }
   
   if ((status = eb_socket_close(socket)) != EB_OK) {
-    fprintf(stderr, "ERROR %d: failed to close Etherbone socket \n", (int) status);
+    
+    if(VERBOSE_CALOE)
+		fprintf(stderr, "ERROR %d: failed to close Etherbone socket \n", (int) status);
+    
     return ERROR_CLOSE_SOCKET;
   }
 
@@ -714,7 +764,10 @@ int write_caloe(access_caloe * access) {
   eb_address_t aligned_address;
   
   if(access->mode != WRITE) {
-      fprintf(stderr,"ERROR: Invalid write operation \n");
+	  
+	  if(VERBOSE_CALOE)
+		fprintf(stderr,"ERROR: Invalid write operation \n");
+      
       return INVALID_OPERATION;
   }
   
@@ -768,12 +821,18 @@ int write_caloe(access_caloe * access) {
   mask >>= (sizeof(eb_data_t)-size)*8;
 
   if ((status = eb_socket_open(EB_ABI_CODE, 0, address_width|data_width, &socket)) != EB_OK) {
-    fprintf(stderr, "ERROR %d: Could not connect Etherbone socket \n", (int) status);
+	  
+	if(VERBOSE_CALOE)
+		fprintf(stderr, "ERROR %d: Could not connect Etherbone socket \n", (int) status);
+    
     return ERROR_OPEN_SOCKET;
   }
   
   if ((status = eb_device_open(socket, net, EB_ADDRX|EB_DATAX, attempts, &device)) != EB_OK) {
-    fprintf(stderr, "ERROR %d: Could not connect Etherbone device \n", (int) status);
+	  
+	if(VERBOSE_CALOE)
+		fprintf(stderr, "ERROR %d: Could not connect Etherbone device \n", (int) status);
+    
     return ERROR_OPEN_DEVICE;
   }
   
@@ -783,7 +842,10 @@ int write_caloe(access_caloe * access) {
    
     struct sdb_device info;
     if ((status = eb_sdb_find_by_address(device, address, &info)) != EB_OK) {
-      fprintf(stderr, "ERROR %d: SDB scan failed! \n", (int) status);
+	  
+	  if(VERBOSE_CALOE)
+		fprintf(stderr, "ERROR %d: SDB scan failed! \n", (int) status);
+      
       return ERROR_SDB_SCAN;
     }
     
@@ -812,13 +874,19 @@ int write_caloe(access_caloe * access) {
     
   /* We cannot work with a device that requires larger access than we support */
   if (write_sizes == 0) {
-    fprintf(stderr, "ERROR: Device could not access with size requested \n");
+	
+	if(VERBOSE_CALOE)
+		fprintf(stderr, "ERROR: Device could not access with size requested \n");
+    
     return ERROR_SIZE_NOT_SUPPORTED;
   }
   
   /* Begin the cycle */
   if ((status = eb_cycle_open(device, &stop, &write_callback_caloe, &cycle)) != EB_OK) {
-    fprintf(stderr, "ERROR %d: Could not create a new Etherbone operation cycle \n",(int) status);
+	  
+	if(VERBOSE_CALOE)
+		fprintf(stderr, "ERROR %d: Could not create a new Etherbone operation cycle \n",(int) status);
+    
     return ERROR_OPEN_CYCLE;
   }
 
@@ -860,7 +928,10 @@ int write_caloe(access_caloe * access) {
         shift_step = fragment_size*8;
         break;
       default:
-        fprintf(stderr, "ERROR: Must know ENDIAN to fragment read \n");
+      
+		if(VERBOSE_CALOE)
+			fprintf(stderr, "ERROR: Must know ENDIAN to fragment read \n");
+        
         return ERROR_UNKNOWN_ENDIAN;
       }
       
@@ -903,7 +974,10 @@ int write_caloe(access_caloe * access) {
         shift = (address - aligned_address);
         break;
       default:
-        fprintf(stderr, "ERROR: Must know ENDIAN to fill partial read \n");
+      
+		if(VERBOSE_CALOE)
+			fprintf(stderr, "ERROR: Must know ENDIAN to fill partial read \n");
+        
         return ERROR_UNKNOWN_ENDIAN;
       }
       mask <<= shift*8;
@@ -928,7 +1002,10 @@ int write_caloe(access_caloe * access) {
 	  
 
   if(!stop) {	
-    fprintf(stderr, "ERROR: Timeout expired! \n");
+	
+	if(VERBOSE_CALOE)
+		fprintf(stderr, "ERROR: Timeout expired! \n");
+    
     return ERROR_TIMEOUT;
   }
       
@@ -948,7 +1025,10 @@ int write_caloe(access_caloe * access) {
     
     /* If the access it full width, an endian is needed. Print a friendlier message than EB_ADDRESS. */
     if ((format & line_width & EB_DATAX) == 0 && (format & EB_ENDIAN_MASK) == 0) {
-        fprintf(stderr, "ERROR: ENDIAN is required \n");
+		
+		if(VERBOSE_CALOE)
+			fprintf(stderr, "ERROR: ENDIAN is required \n");
+        
         return ERROR_UNKNOWN_ENDIAN;
     }
 
@@ -970,17 +1050,26 @@ int write_caloe(access_caloe * access) {
   }
 
   if(!stop) {	
-    fprintf(stderr, "ERROR %d: Timeout expired! \n",(int) status);
+	
+	if(VERBOSE_CALOE)
+		fprintf(stderr, "ERROR %d: Timeout expired! \n",(int) status);
+    
     return ERROR_TIMEOUT;
   }
   
   if ((status = eb_device_close(device)) != EB_OK) {
-    fprintf(stderr, "ERROR %d: failed to close Etherbone device \n",(int) status);
+    
+    if(VERBOSE_CALOE)
+		fprintf(stderr, "ERROR %d: failed to close Etherbone device \n",(int) status);
+    
     return ERROR_CLOSE_DEVICE;
   }
   
   if ((status = eb_socket_close(socket)) != EB_OK) {
-    fprintf(stderr, "ERROR %d: failed to close Etherbone socket \n",(int) status);
+    
+    if(VERBOSE_CALOE)
+		fprintf(stderr, "ERROR %d: failed to close Etherbone socket \n",(int) status);
+    
     return ERROR_CLOSE_SOCKET;
   }
 
@@ -996,7 +1085,9 @@ int write_chained_caloe(access_caloe * access) {
 	int rcode;
 
 	if(access->mode != WCHAINED) {
-      		fprintf(stderr,"ERROR: Invalid chained write operation \n");
+			if(VERBOSE_CALOE)
+				fprintf(stderr,"ERROR: Invalid chained write operation \n");
+      		
       		return INVALID_OPERATION;
   	}
 
@@ -1024,7 +1115,9 @@ int write_chained_caloe(access_caloe * access) {
 int scan_caloe(access_caloe * access) {
   
   if(access->mode != SCAN) {
-      fprintf(stderr,"ERROR: Invalid scan operation \n");
+	  if(VERBOSE_CALOE)
+		fprintf(stderr,"ERROR: Invalid scan operation \n");
+      
       return INVALID_OPERATION;
   }
   
@@ -1056,19 +1149,28 @@ int scan_caloe(access_caloe * access) {
   sprintf(net,"%s/%d",netaddress,port);
 
  if ((status = eb_socket_open(EB_ABI_CODE, 0, address_width|data_width, &socket)) != EB_OK) {
-    fprintf(stderr, "ERROR %d: Could not connect Etherbone socket \n",status);
+	
+	if(VERBOSE_CALOE)
+		fprintf(stderr, "ERROR %d: Could not connect Etherbone socket \n",status);
+    
     return ERROR_OPEN_SOCKET;
   }
   
   if ((status = eb_device_open(socket, net, EB_ADDRX|EB_DATAX, attempts, &device)) != EB_OK) { 
-    fprintf(stderr, "ERROR: Could not connect Etherbone device \n");
+    
+    if(VERBOSE_CALOE)
+		fprintf(stderr, "ERROR: Could not connect Etherbone device \n");
+    
     return ERROR_OPEN_DEVICE;
   }
   
   br.addr_last >>= (sizeof(eb_address_t) - (eb_device_width(device) >> 4))*8;
   
   if ((status = eb_sdb_scan_root(device, &br, &scan_callback_caloe)) != EB_OK) {
-    fprintf(stderr, "ERROR: Failed to scan remote device: %s\n", eb_status(status));
+    
+    if(VERBOSE_CALOE)
+		fprintf(stderr, "ERROR: Failed to scan remote device: %s\n", eb_status(status));
+    
     return ERROR_SDB_SCAN;
   }
 
@@ -1083,17 +1185,26 @@ int scan_caloe(access_caloe * access) {
   }
 
   if(!br.stop) {	
-    fprintf(stderr, "ERROR: Timeout expired! \n");
+	  
+	if(VERBOSE_CALOE)
+		fprintf(stderr, "ERROR: Timeout expired! \n");
+    
     return ERROR_TIMEOUT;
   }
   
   if ((status = eb_device_close(device)) != EB_OK) {
-    fprintf(stderr, "ERROR: failed to close Etherbone device \n");
+	  
+	if(VERBOSE_CALOE)
+		fprintf(stderr, "ERROR: failed to close Etherbone device \n");
+    
     return ERROR_CLOSE_DEVICE;
   }
   
   if ((status = eb_socket_close(socket)) != EB_OK) {
-    fprintf(stderr, "ERROR: failed to close Etherbone socket \n");
+    
+    if(VERBOSE_CALOE)
+		fprintf(stderr, "ERROR: failed to close Etherbone socket \n");
+    
     return ERROR_CLOSE_SOCKET;
   }
 	
@@ -1183,7 +1294,9 @@ int execute_tools_caloe(access_caloe * access) {
 	sprintf(net,"%s/%d",netaddress,port);
 
 	switch(pid=fork()){
-		case -1: fprintf(stderr,"ERROR: Fork is failed!!\n");
+		case -1:
+			  if(VERBOSE_CALOE)
+				fprintf(stderr,"ERROR: Fork is failed!!\n");
               break;
 		case 0: 
 			close(pipefd[0]); 

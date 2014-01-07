@@ -73,6 +73,9 @@
 /// Timeout (ms) to read/write operations (-1: NOT LIMITED)
 #define TIMEOUT_LIMIT -1
 
+/// Verbose mode (0: disabled, 1: enabled)
+#define VERBOSE_CALOE 0
+
 /// Data buffer to read/write operations with Etherbone library
 static eb_data_t data;
 
