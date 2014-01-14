@@ -185,4 +185,50 @@ void Vuart::writeString(string ip, string s, unsigned long period) {
 	}
 }
 
+void Vuart::flush(string ip) {
+	bool valid = false;
+	
+	this->read(ip,valid);
+	
+	while(valid) {
+		this->read(ip,valid);
+	}
+}
+
+void Vuart::execute_cmd(string ip, string cmd) {
+	struct termios oldkey, newkey;
+	char data;
+	bool valid = false;
+
+	tcgetattr(STDIN_FILENO,&oldkey);
+	newkey.c_cflag = B9600 | CS8 | CLOCAL | CREAD;
+	newkey.c_iflag = IGNPAR;
+	newkey.c_oflag = 0;
+	newkey.c_lflag = 0;
+	newkey.c_cc[VMIN]=1;
+	newkey.c_cc[VTIME]=0;
+	tcflush(STDIN_FILENO, TCIFLUSH);
+	tcsetattr(STDIN_FILENO,TCSANOW,&newkey);
+	
+	string::iterator it;
+	
+	for(it = cmd.begin() ; it != cmd.end() ; it++) {
+		if(this->isReady(ip)) {
+			this->write(ip,*it);
+		}
+	}
+	
+	if(this->isReady(ip))
+		this->write(ip,0xd);
+	
+	data = this->read(ip,valid);
+	
+	while(valid) {
+		fprintf(stderr,"%c",data);
+		data = this->read(ip,valid);
+	}
+	
+	tcsetattr(STDIN_FILENO,TCSANOW,&oldkey);
+}
+
 Vuart::~Vuart() {}

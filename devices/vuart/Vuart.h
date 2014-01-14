@@ -32,6 +32,8 @@
 #include <iostream>
 #include <unistd.h>
 
+#include <termios.h>
+
 using namespace std;
 using namespace caloe;
 
@@ -130,6 +132,24 @@ class Vuart {
 		 **/
 		 
 		void writeString(string ip, string s,unsigned long period);
+		
+		/**  @brief Flush virtual uart buffer
+		 * 
+		 *   @param ip Etherbone server Netaddress IP 
+		 * 
+		 **/
+		
+		void flush(string ip);
+		
+		/**  @brief Execute one virtual uart command and wait for response
+		 * 
+		 *   @param ip Etherbone server Netaddress IP 
+		 * 
+		 *   @param s cmd Command to execute
+		 * 
+		 **/
+		
+		void execute_cmd(string ip, string cmd);
 		
 		/** @brief Vuart destructor **/
 		

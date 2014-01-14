@@ -62,6 +62,31 @@ int is_there_data() {
 
 /**
  *
+ * @brief Flush uart buffer
+ * 
+ */
+ 
+void vuart_flush(string ip) {
+	
+	Vuart vuart("../devices/vuart/vuart.cfg");
+	
+	vuart.flush(ip);
+}
+
+/**
+ *
+ * @brief Send a command to vuart and wait for response
+ * 
+ */
+ 
+void vuart_send_cmd(string ip, string cmd) {
+	Vuart vuart("../devices/vuart/vuart.cfg");
+	
+	vuart.execute_cmd(ip,cmd);
+}
+
+/**
+ *
  * @brief Vuart terminal fuction
  * 
  */
@@ -71,28 +96,24 @@ void vuart_cmd(string ip) {
 	Vuart vuart("../devices/vuart/vuart.cfg");
 	struct termios oldkey, newkey;
 	bool need_exit = false;	
-	int keep_term = 0;
 	const int MAX_POLL_WAIT = 20;
 	int ipoll = 0;
 	
 	string net = ip;
-	int ret;
 	bool valid = false;
 	
 	fprintf(stderr, "[press CTRL+a to exit]\n");
 
-	if(!keep_term) {
-		tcgetattr(STDIN_FILENO,&oldkey);
-		newkey.c_cflag = B9600 | CS8 | CLOCAL | CREAD;
-		newkey.c_iflag = IGNPAR;
-		newkey.c_oflag = 0;
-		newkey.c_lflag = 0;
-		newkey.c_cc[VMIN]=1;
-		newkey.c_cc[VTIME]=0;
-		tcflush(STDIN_FILENO, TCIFLUSH);
-		tcsetattr(STDIN_FILENO,TCSANOW,&newkey);
-	}
-	
+	tcgetattr(STDIN_FILENO,&oldkey);
+	newkey.c_cflag = B9600 | CS8 | CLOCAL | CREAD;
+	newkey.c_iflag = IGNPAR;
+	newkey.c_oflag = 0;
+	newkey.c_lflag = 0;
+	newkey.c_cc[VMIN]=1;
+	newkey.c_cc[VTIME]=0;
+	tcflush(STDIN_FILENO, TCIFLUSH);
+	tcsetattr(STDIN_FILENO,TCSANOW,&newkey);
+		
 	while(!need_exit) {
 
 		if(is_there_data()) {
@@ -122,8 +143,7 @@ void vuart_cmd(string ip) {
 
 	}
 	
-	if(!keep_term)
-		tcsetattr(STDIN_FILENO,TCSANOW,&oldkey);
+	tcsetattr(STDIN_FILENO,TCSANOW,&oldkey);
 }
 
 int main ()
@@ -138,6 +158,7 @@ int main ()
   char specific_dio;
   bool specific_dio_b = false;
   string cmd;
+  string virtual_cmd;
   string proto("udp");
   
   do {
@@ -383,32 +404,51 @@ int main ()
 																		cout <<endl<<"IP: ";
 																		cin >> ip;
 																	}
+																	
 																	vuart_cmd(proto+"/"+ip);
 																}
 																else {
-																	if(cmd == "help" || cmd == "?") {
-																		cout<<"COMMANDS: "<<endl<<endl;
-																		cout <<"scan"<<endl;
-																		cout <<"pulse_imm"<<endl;
-																		cout <<"pulse_prog"<<endl;
-																		cout <<"config_ch"<<endl;
-																		cout <<"show_config_ch"<<endl;
-																		cout <<"fifo_val"<<endl;
-																		cout <<"all_fifo_val"<<endl;
-																		cout <<"fifo_empty"<<endl;
-																		cout <<"fifo_full"<<endl;
-																		cout <<"fifo_size"<<endl;
-																		cout <<"exit"<<endl;
-																		cout <<"connect"<<endl;
-																		cout <<"disconnect"<<endl;
-																		cout <<"proto"<<endl;
-																		cout <<"vuart"<<endl;
-																		cout <<"help/?"<<endl;
-																		cout<<endl<<endl;
+																	if(cmd == "vcmd") {
+																		cout << "WARNING: Vuart is under testing!!"<<endl;
+																		if(!specific_dio_b) {
+																			cout <<endl<<"IP: ";
+																			cin >> ip;
+																		}
+																		
+																		cout <<"Vuart cmd: ";
+																		getline(cin,virtual_cmd);
+																		
+																		vuart_flush(proto+"/"+ip);
+																		
+																		vuart_send_cmd(proto+"/"+ip,virtual_cmd);
 																	}
 																	else {
-																		cout <<endl<<endl<<"UNRECOGNIZED COMMAND"<<endl<<endl;
+																		if(cmd == "help" || cmd == "?") {
+																			cout<<"COMMANDS: "<<endl<<endl;
+																			cout <<"scan"<<endl;
+																			cout <<"pulse_imm"<<endl;
+																			cout <<"pulse_prog"<<endl;
+																			cout <<"config_ch"<<endl;
+																			cout <<"show_config_ch"<<endl;
+																			cout <<"fifo_val"<<endl;
+																			cout <<"all_fifo_val"<<endl;
+																			cout <<"fifo_empty"<<endl;
+																			cout <<"fifo_full"<<endl;
+																			cout <<"fifo_size"<<endl;
+																			cout <<"exit"<<endl;
+																			cout <<"connect"<<endl;
+																			cout <<"disconnect"<<endl;
+																			cout <<"proto"<<endl;
+																			cout <<"vuart"<<endl;
+																			cout <<"vcmd"<<endl;
+																			cout <<"help/?"<<endl;
+																			cout<<endl<<endl;
+																		}
+																		else {
+																			cout <<endl<<endl<<cmd<<" UNRECOGNIZED COMMAND"<<endl<<endl;
+																		}
 																	}
+																
 																}
 															}
 														}

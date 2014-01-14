@@ -26,7 +26,7 @@
  # ******************************************************************************
  
 
-all: etherbone-submodule build-etherbone build-lib build-devices build-tools
+all: etherbone-submodule build-etherbone build-lib build-devices build-tools end
 
 etherbone-submodule: 
 	@echo "main: SUBMODULE Etherbone..."
@@ -46,8 +46,11 @@ build-tools:
 build-lib:
 	@make -C ./lib
 
-doc:
+build-doxygen:
 	@make -C ./doxygen
+
+end:
+	@echo "main: Compilation terminated successfully"
 
 clean:
 	@echo "main: Cleanup..."
@@ -57,3 +60,4 @@ clean:
 	@make -C ./lib clean
 	@make -C ./doxygen clean
 	@make -C ./etherbone/api clean
+	@make -C ./doc clean
