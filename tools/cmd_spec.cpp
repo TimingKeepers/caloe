@@ -317,6 +317,9 @@ int main ()
 																	cout << "Loop mode (y/n): ";
 																	cin >> loop;
 																	
+																	if(loop == 'y')
+																		cout << "Note: Execute exit command in order to close loop mode of vuart!!"<<endl;
+																	
 																	trash = getchar();
 																	
 																	do {
@@ -327,12 +330,17 @@ int main ()
 																			loop = 'n';
 																			
 																		else {
+																			
+																			if(virtual_cmd == "gui" || virtual_cmd == "stat cont") {
+																				cout << "WARNING: gui and stat cont must not be used in remote mode (changing to stat cmd)!!"<<endl;
+																				virtual_cmd = "stat";
+																			}
 																		
 																			vuart.flush(proto+"/"+ip);
 																		
 																			res = vuart.execute_cmd(proto+"/"+ip,virtual_cmd);
 																	
-																			res = filter_vuart(res);
+																			//res = filter_vuart(res);
 																		
 																			cout << res << endl;
 																		}
