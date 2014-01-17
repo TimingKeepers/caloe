@@ -32,8 +32,6 @@
 #include <iostream>
 #include <unistd.h>
 
-#include <termios.h>
-
 using namespace std;
 using namespace caloe;
 
@@ -147,9 +145,11 @@ class Vuart {
 		 * 
 		 *   @param s cmd Command to execute
 		 * 
+		 *   @return Command results in string variable
+		 * 
 		 **/
 		
-		void execute_cmd(string ip, string cmd);
+		string execute_cmd(string ip, string cmd);
 		
 		/** @brief Vuart destructor **/
 		

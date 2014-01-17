@@ -195,20 +195,10 @@ void Vuart::flush(string ip) {
 	}
 }
 
-void Vuart::execute_cmd(string ip, string cmd) {
-	struct termios oldkey, newkey;
+string Vuart::execute_cmd(string ip, string cmd) {
 	char data;
 	bool valid = false;
-
-	tcgetattr(STDIN_FILENO,&oldkey);
-	newkey.c_cflag = B9600 | CS8 | CLOCAL | CREAD;
-	newkey.c_iflag = IGNPAR;
-	newkey.c_oflag = 0;
-	newkey.c_lflag = 0;
-	newkey.c_cc[VMIN]=1;
-	newkey.c_cc[VTIME]=0;
-	tcflush(STDIN_FILENO, TCIFLUSH);
-	tcsetattr(STDIN_FILENO,TCSANOW,&newkey);
+	string res;
 	
 	string::iterator it;
 	
@@ -224,11 +214,11 @@ void Vuart::execute_cmd(string ip, string cmd) {
 	data = this->read(ip,valid);
 	
 	while(valid) {
-		fprintf(stderr,"%c",data);
+		res.push_back(data);
 		data = this->read(ip,valid);
 	}
 	
-	tcsetattr(STDIN_FILENO,TCSANOW,&oldkey);
+	return res;
 }
 
 Vuart::~Vuart() {}

@@ -28,127 +28,32 @@
 #include "../devices/dio/Dio.h"
 #include "../devices/vuart/Vuart.h"
 
-/* According to POSIX.1-2001 */
-#include <sys/select.h>
-
-/* According to earlier standards */
-#include <sys/time.h>
-#include <sys/types.h>
-#include <unistd.h>
-#include <termios.h>
-
 using namespace std;
 
-/**
- * @brief This function checks if an input character is avalaible to send to vuart. 
- * 
- * @return 0 if there is not data, other value otherwise
- */
-
-int is_there_data() {
-
-	fd_set fds;
-	struct timeval tv = {0, 10000};
-
-
-	FD_ZERO(&fds);
-	FD_SET(STDIN_FILENO, &fds);
-
-	int ret = select(1, &fds, NULL, NULL, &tv);
-
-	return ret;
+string filter_vuart(string res) {
+	string filtered_res;
+	string :: iterator it;
 	
-}
-
-/**
- *
- * @brief Flush uart buffer
- * 
- */
- 
-void vuart_flush(string ip) {
+	filtered_res.push_back('\n');
 	
-	Vuart vuart("../devices/vuart/vuart.cfg");
-	
-	vuart.flush(ip);
-}
-
-/**
- *
- * @brief Send a command to vuart and wait for response
- * 
- */
- 
-void vuart_send_cmd(string ip, string cmd) {
-	Vuart vuart("../devices/vuart/vuart.cfg");
-	
-	vuart.execute_cmd(ip,cmd);
-}
-
-/**
- *
- * @brief Vuart terminal fuction
- * 
- */
-
-void vuart_cmd(string ip) {
-
-	Vuart vuart("../devices/vuart/vuart.cfg");
-	struct termios oldkey, newkey;
-	bool need_exit = false;	
-	const int MAX_POLL_WAIT = 20;
-	int ipoll = 0;
-	
-	string net = ip;
-	bool valid = false;
-	
-	fprintf(stderr, "[press CTRL+a to exit]\n");
-
-	tcgetattr(STDIN_FILENO,&oldkey);
-	newkey.c_cflag = B9600 | CS8 | CLOCAL | CREAD;
-	newkey.c_iflag = IGNPAR;
-	newkey.c_oflag = 0;
-	newkey.c_lflag = 0;
-	newkey.c_cc[VMIN]=1;
-	newkey.c_cc[VTIME]=0;
-	tcflush(STDIN_FILENO, TCIFLUSH);
-	tcsetattr(STDIN_FILENO,TCSANOW,&newkey);
+	for(it = res.begin() ; it != res.end() && *it != '\n' ; it++)
+		;
 		
-	while(!need_exit) {
-
-		if(is_there_data()) {
-
-			char c = getchar();
-			
-			if(c == '\x01') {
-				need_exit=true;
-			}
-			else {
-				if(vuart.isReady(net)) {
-					vuart.write(net,c);
-				}
-			}
-		}
-		
-		if(ipoll == 0) {
-			char data = vuart.read(net,valid);
-		
-			while(valid) {
-				fprintf(stderr,"%c",data);
-				data = vuart.read(net,valid);
-			}
-		}
-		
-		ipoll = (ipoll+1)%MAX_POLL_WAIT;
-
+	if(it != res.end()) {
+	
+		for(; it != res.end() ; it++)
+			filtered_res.push_back(*it);
+	
+		filtered_res.push_back('\n');
 	}
 	
-	tcsetattr(STDIN_FILENO,TCSANOW,&oldkey);
+	return filtered_res;
 }
 
 int main ()
 {
   Dio dio("../devices/dio/dio.cfg");
+  Vuart vuart("../devices/vuart/vuart.cfg");
   
   string ip;
   long int len_pulse;
@@ -399,57 +304,67 @@ int main ()
 															}
 															else {
 																if(cmd == "vuart") {
-																	 cout << "WARNING: Vuart is under testing!!"<<endl;
-																	 if(!specific_dio_b) {
+																	string res;
+																	char trash;
+																	char loop;
+																	
+																	cout << "WARNING: Vuart is under testing!!"<<endl;
+																	if(!specific_dio_b) {
 																		cout <<endl<<"IP: ";
 																		cin >> ip;
 																	}
 																	
-																	vuart_cmd(proto+"/"+ip);
-																}
-																else {
-																	if(cmd == "vcmd") {
-																		cout << "WARNING: Vuart is under testing!!"<<endl;
-																		if(!specific_dio_b) {
-																			cout <<endl<<"IP: ";
-																			cin >> ip;
-																		}
-																		
-																		cout <<"Vuart cmd: ";
+																	cout << "Loop mode (y/n): ";
+																	cin >> loop;
+																	
+																	trash = getchar();
+																	
+																	do {
+																		cout << "wrc# ";
 																		getline(cin,virtual_cmd);
 																		
-																		vuart_flush(proto+"/"+ip);
+																		if(virtual_cmd == "exit")
+																			loop = 'n';
+																			
+																		else {
 																		
-																		vuart_send_cmd(proto+"/"+ip,virtual_cmd);
+																			vuart.flush(proto+"/"+ip);
+																		
+																			res = vuart.execute_cmd(proto+"/"+ip,virtual_cmd);
+																	
+																			res = filter_vuart(res);
+																		
+																			cout << res << endl;
+																		}
+																		
+																	} while(loop == 'y');
+																}
+																else {
+																	if(cmd == "help" || cmd == "?") {
+																		cout<<"COMMANDS: "<<endl<<endl;
+																		cout <<"scan"<<endl;
+																		cout <<"pulse_imm"<<endl;
+																		cout <<"pulse_prog"<<endl;
+																		cout <<"config_ch"<<endl;
+																		cout <<"show_config_ch"<<endl;
+																		cout <<"fifo_val"<<endl;
+																		cout <<"all_fifo_val"<<endl;
+																		cout <<"fifo_empty"<<endl;
+																		cout <<"fifo_full"<<endl;
+																		cout <<"fifo_size"<<endl;
+																		cout <<"exit"<<endl;
+																		cout <<"connect"<<endl;
+																		cout <<"disconnect"<<endl;
+																		cout <<"proto"<<endl;
+																		cout <<"vuart"<<endl;
+																		cout <<"help/?"<<endl;
+																		cout<<endl<<endl;
 																	}
 																	else {
-																		if(cmd == "help" || cmd == "?") {
-																			cout<<"COMMANDS: "<<endl<<endl;
-																			cout <<"scan"<<endl;
-																			cout <<"pulse_imm"<<endl;
-																			cout <<"pulse_prog"<<endl;
-																			cout <<"config_ch"<<endl;
-																			cout <<"show_config_ch"<<endl;
-																			cout <<"fifo_val"<<endl;
-																			cout <<"all_fifo_val"<<endl;
-																			cout <<"fifo_empty"<<endl;
-																			cout <<"fifo_full"<<endl;
-																			cout <<"fifo_size"<<endl;
-																			cout <<"exit"<<endl;
-																			cout <<"connect"<<endl;
-																			cout <<"disconnect"<<endl;
-																			cout <<"proto"<<endl;
-																			cout <<"vuart"<<endl;
-																			cout <<"vcmd"<<endl;
-																			cout <<"help/?"<<endl;
-																			cout<<endl<<endl;
-																		}
-																		else {
-																			cout <<endl<<endl<<cmd<<" UNRECOGNIZED COMMAND"<<endl<<endl;
-																		}
+																		cout <<endl<<endl<<cmd<<" UNRECOGNIZED COMMAND"<<endl<<endl;
 																	}
-																
 																}
+																
 															}
 														}
 													}
