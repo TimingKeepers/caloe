@@ -50,4 +50,19 @@ vector<string> split(string s, char del) {
 	return s_split;
 }
 
+string join(vector<string> vs) {
+	vector<string>::iterator it;
+	string::iterator it2;
+	string s;
+	
+	for(it = vs.begin() ; it != vs.end() ; it++) {
+		string s2 = *it;
+		for(it2 = s2.begin() ; it2 != s2.end() ; it2++) {
+			s.push_back(*it2);
+		}
+	}
+	
+	return s;
+}
+
 }

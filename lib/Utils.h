@@ -30,7 +30,6 @@
 
 #include <vector>
 #include <string>
-#include <iostream>
 
 using namespace std;
 
@@ -44,6 +43,14 @@ namespace caloe {
  *  @return A vector of separated string based on separator character
 */
 vector<string> split(string s, char del);
+
+/** @brief Join into a string several strings from a vector
+ *
+ *  @param vs Vector to join
+ *
+ *  @return All joined string
+*/
+string join(vector<string> vs);
 
 }
 
