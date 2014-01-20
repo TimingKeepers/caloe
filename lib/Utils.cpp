@@ -31,30 +31,22 @@ namespace caloe {
 
 vector<string> split(string s, char del) {
 	vector<string> s_split;
-	int it;
-	int it2;
-	int size = s.size();	
-
-	for(it2 = it = 0 ; it < size ; it++) {
-		// If you find del character, you can separate a new string
-		if(s.at(it) == del) {
-			// Get string
-			string aux = s.substr(it2,it);
-			
-			// Add string
-			s_split.push_back(aux);
-			
-			// Update iterators
-			it2 = it+1;
+	string::iterator it;
+	string s2;
+	
+	for(it = s.begin() ; it != s.end() ; it++) {
+		if(*it != del) {
+			s2.push_back(*it);
+		}
+		else {
+			s_split.push_back(s2);
+			s2.clear();
 		}
 	}
-
-	// Last string is special case
-	string aux = s.substr(it2,it);
 	
-	// Add last string
-	s_split.push_back(aux);
-
+	if(!s2.empty())
+		s_split.push_back(s2);
+	
 	return s_split;
 }
 
