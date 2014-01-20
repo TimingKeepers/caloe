@@ -210,6 +210,9 @@ string Vuart::execute_cmd(string ip, string cmd) {
 	
 	if(this->isReady(ip))
 		this->write(ip,0xd);
+		
+	if(WAIT_VUART > 0)
+		usleep(WAIT_VUART);
 	
 	data = this->read(ip,valid);
 	

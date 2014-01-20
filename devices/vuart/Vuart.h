@@ -32,6 +32,8 @@
 #include <iostream>
 #include <unistd.h>
 
+#define WAIT_VUART 1000000 // usecs (1 second)
+
 using namespace std;
 using namespace caloe;
 
