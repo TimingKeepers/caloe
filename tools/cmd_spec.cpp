@@ -30,24 +30,13 @@
 
 using namespace std;
 
-string filter_vuart(string res) {
-	string filtered_res;
-	string :: iterator it;
+void printf_vuart(string res,string cmd) {
+	vector<string> res_split = split(res,'\n');
+	vector<string>::iterator it;
 	
-	filtered_res.push_back('\n');
-	
-	for(it = res.begin() ; it != res.end() && *it != '\n' ; it++)
-		;
-		
-	if(it != res.end()) {
-	
-		for(; it != res.end() ; it++)
-			filtered_res.push_back(*it);
-	
-		filtered_res.push_back('\n');
+	for(it = res_split.begin() ; it != res_split.end()-1 ; it++) {
+		cout << *it <<endl;
 	}
-	
-	return filtered_res;
 }
 
 int main ()
@@ -340,9 +329,7 @@ int main ()
 																		
 																			res = vuart.execute_cmd(proto+"/"+ip,virtual_cmd);
 																	
-																			//res = filter_vuart(res);
-																		
-																			cout << res << endl;
+																			printf_vuart(res,virtual_cmd);
 																		}
 																		
 																	} while(loop == 'y');
