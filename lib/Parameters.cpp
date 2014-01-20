@@ -218,35 +218,6 @@ istream & operator>>(istream & is, ParamOperation & po) {
 
 ParamOperation::~ParamOperation() {}
 
-vector<string> ParamConfig::split(string s, char del) {
-	vector<string> s_split;
-	int it;
-	int it2;
-	int size = s.size();	
-
-	for(it2 = it = 0 ; it < size ; it++) {
-		// If you find del character, you can separate a new string
-		if(s.at(it) == del) {
-			// Get string
-			string aux = s.substr(it2,it);
-			
-			// Add string
-			s_split.push_back(aux);
-			
-			// Update iterators
-			it2 = it+1;
-		}
-	}
-
-	// Last string is special case
-	string aux = s.substr(it2,it);
-	
-	// Add last string
-	s_split.push_back(aux);
-
-	return s_split;
-}
-
 ParamConfig::ParamConfig() {
 	// Default values
 	parameters = PARAM_NONE;
@@ -408,7 +379,7 @@ istream & operator>>(istream & is, ParamConfig & pc) {
 			getline(is,s);
 		}while(s.size() == 0);
 		
-		s2 = pc.split(s,',');
+		s2 = split(s,',');
 		
 		for(it = s2.begin() ; it != s2.end() ; it++) {
 			sscanf (it->c_str(),"%x",&off);
@@ -427,7 +398,7 @@ istream & operator>>(istream & is, ParamConfig & pc) {
 			getline(is,s);
 		}while(s.size() == 0);
 		
-		s2 = pc.split(s,',');
+		s2 = split(s,',');
 		
 		for(it = s2.begin() ; it != s2.end() ; it++) {
 			sscanf (it->c_str(),"%x",&msk);

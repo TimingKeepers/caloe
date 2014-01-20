@@ -38,6 +38,8 @@
 
 #include <stdio.h>
 
+#include "Utils.h"
+
 using namespace std;
 
 namespace caloe {
@@ -302,10 +304,7 @@ class ParamConfig {
 		/// Mask vector (user can choose one of them with an index in ParamAccess)
 		
 		vector<int> masks;
-		
-		/// Split method (used to parse offset/mask vector from input configuration file)
-		vector<string> split(string s, char del);
-		
+
 	public:
 	
 		/** @brief ParamConfig default constructor **/

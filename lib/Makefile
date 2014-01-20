@@ -30,7 +30,7 @@ Netcon.o: Netcon.h Netcon.cpp
 	@echo "lib: Compiling Netcon..."
 	@g++ -g -o Netcon.o -c Netcon.cpp
 
-Access.o: Access.h Access.cpp Netcon.h Netcon.cpp Parameters.h Parameters.cpp
+Access.o: Access.h Access.cpp Netcon.h Netcon.cpp Parameters.cpp Parameters.h
 	@echo "lib: Compiling Access..."
 	@g++ -g -o Access.o -c Access.cpp
 
@@ -46,17 +46,21 @@ System.o: System.h System.cpp Device.h Device.cpp
 	@echo "lib: Compiling System..."
 	@g++ -g -o System.o -c System.cpp
 	
-Parameters.o: Parameters.h Parameters.cpp
+Parameters.o: Parameters.h Parameters.cpp Utils.h Utils.cpp
 	@echo "lib: Compiling Parameter..."
 	@g++ -g -o Parameters.o -c Parameters.cpp
+	
+Utils.o: Utils.h Utils.cpp
+	@echo "lib: Compiling Utils..."
+	@g++ -g -o Utils.o -c Utils.cpp
 	
 access_internals.o: access_internals.h access_internals.c
 	@echo "lib: Compiling access_internals..."
 	@gcc -o access_internals.o -c access_internals.c
 	
-libcaloe.a: Netcon.o Access.o Operation.o Device.o System.o Parameters.o access_internals.o
+libcaloe.a: access_internals.o Netcon.o Utils.o Parameters.o Access.o Operation.o Device.o System.o 
 	@echo "lib: Generating libcaloe..."
-	@ar rs libcaloe.a Netcon.o Access.o Operation.o Device.o System.o Parameters.o access_internals.o
+	@ar rs libcaloe.a access_internals.o Netcon.o Utils.o Parameters.o Access.o Operation.o Device.o System.o 
 	
 clean:
 	@echo "lib: Cleanup..."
