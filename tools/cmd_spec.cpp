@@ -30,11 +30,31 @@
 
 using namespace std;
 
+string delete_format_chars(string s) {
+	string s2;
+	int size = s.length();
+	int i;
+	
+	for(i = 4 ; i < size ; i = i+5) {
+		s2.push_back(s.at(i));
+	}
+	
+	return s2;
+}
+
 void printf_vuart(string res,string cmd) {
 	vector<string> res_split = split(res,'\n');
 	vector<string>::iterator it;
+	vector<string>::iterator itb = res_split.begin();
+	vector<string>::iterator ite = res_split.end()-1;
+	string fl = delete_format_chars(*itb);
 	
-	for(it = res_split.begin() ; it != res_split.end()-1 ; it++) {
+	bool cmd_first_line = (fl.find(cmd) != string::npos);
+	
+	if(cmd_first_line)
+		itb++;
+	
+	for(it = itb ; it != ite ; it++) {
 		cout << *it <<endl;
 	}
 }
