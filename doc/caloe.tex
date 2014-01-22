@@ -1,0 +1,57 @@
+\documentclass{article}
+
+\usepackage [T1] {fontenc}
+\usepackage {graphicx}
+\usepackage {float}
+\usepackage {url}
+\usepackage {color}
+\usepackage {listings}
+
+\renewcommand{\baselinestretch}{1.5}
+
+\begin{document}
+
+\input{titlepage.tex}
+
+\input{./sections/abstract.tex}
+
+\pagestyle{plain}
+
+\newpage
+
+\tableofcontents
+
+\newpage
+
+\listoffigures
+
+\newpage
+
+\input{./sections/intro.tex}
+
+\newpage
+
+\input{./sections/goals.tex}
+
+\newpage
+
+\input{./sections/caloe_library.tex}
+
+\newpage
+
+\input{./sections/conclusion.tex}
+
+\newpage
+
+\input{./sections/issues.tex}
+
+\newpage
+
+\input{./sections/future_work.tex}
+
+\newpage
+
+\bibliographystyle{plain}
+\bibliography{bibliography}
+
+\end{document}

@@ -1,6 +1,6 @@
  # ****************************************************************************** 
  # @file Makefile
- #  @brief CALoE Library Makefile. It builds CALoE library and examples.
+ #  @brief CALoE Library Makefile. It builds CALoE library doc.
  #
  #  Copyright (C) 2013
  #
@@ -24,43 +24,14 @@
  #  You should have received a copy of the GNU Lesser General Public
  #  License along with this library. If not, see <http//www.gnu.org/licenses/>.
  # ******************************************************************************
- 
 
-all: etherbone-submodule build-etherbone build-lib build-devices build-tools end
+report:
+	@echo "doc: Compiling doc (report)..."
+	@pdflatex caloe.tex
+	@bibtex caloe.aux
+	@pdflatex caloe.tex
+	@pdflatex caloe.tex
 
-etherbone-submodule: 
-	@echo "main: SUBMODULE Etherbone..."
-	@git submodule init
-	@git submodule update
-
-build-etherbone: etherbone
-	@echo "main: Building Etherbone library..."
-	@make -C ./etherbone/api
-
-build-devices: 
-	@make -C ./devices
-
-build-tools:
-	@make -C ./tools
-
-build-lib:
-	@make -C ./lib
-
-build-doxygen:
-	@make -C ./doxygen
-
-build-doc:
-	@make -C ./doc
-
-end:
-	@echo "main: Compilation terminated successfully"
-
-clean:
-	@echo "main: Cleanup..."
-	@-rm *~
-	@make -C ./devices clean
-	@make -C ./tools clean
-	@make -C ./lib clean
-	@make -C ./doxygen clean
-	@make -C ./etherbone/api clean
-	@make -C ./doc clean
+clean: 
+	@echo "doc: Cleanup"
+	@-rm *~ *.bbl *.blg *.log *.lof *.toc *.aux *.pdf
