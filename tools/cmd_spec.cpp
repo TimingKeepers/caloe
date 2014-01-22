@@ -30,6 +30,8 @@
 
 using namespace std;
 
+#define HIDE_GUI_STAT_CONT 0
+
 string delete_format_chars(string s) {
 	string s2;
 	int size = s.length();
@@ -340,9 +342,11 @@ int main ()
 																			
 																		else {
 																			
-																			if(virtual_cmd == "gui" || virtual_cmd == "stat cont") {
-																				cout << "WARNING: gui and stat cont must not be used in remote mode (changing to stat cmd)!!"<<endl;
-																				virtual_cmd = "stat";
+																			if(HIDE_GUI_STAT_CONT == 1) {
+																				if(virtual_cmd == "gui" || virtual_cmd == "stat cont") {
+																					cout << "WARNING: gui and stat cont must not be used in remote mode (changing to stat cmd)!!"<<endl;
+																					virtual_cmd = "stat";
+																				}
 																			}
 																		
 																			vuart.flush(proto+"/"+ip);
