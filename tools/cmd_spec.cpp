@@ -76,7 +76,7 @@ int main ()
   string proto("udp");
   
   do {
-	cout <<"Connect with specific dio? (y/n): ";
+	cout <<"Do you want to connect with specific spec? (y/n): ";
 	cin >> specific_dio;
   } while (specific_dio != 'y' && specific_dio != 'n');
   
@@ -91,7 +91,7 @@ int main ()
 	  if(!specific_dio_b)
 		cout << "command>> ";
 	  else 
-		cout << "dio@"<<ip<<">> ";
+		cout << "spec@"<<ip<<">> ";
 		
 	  cin >> cmd;
 	  
@@ -323,7 +323,7 @@ int main ()
 																		cin >> ip;
 																	}
 																	
-																	cout << "Loop mode (y/n): ";
+																	cout << "Loop mode (y/n)?: ";
 																	cin >> loop;
 																	
 																	if(loop == 'y')
