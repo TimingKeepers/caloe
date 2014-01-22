@@ -71,7 +71,7 @@ class Access {
 		
 		bool is_config; 
 		
-		/// Access mode (READ, WRITE, SCAN, WCHAINED)
+		/// Access mode (READ, WRITE, SCAN, READ_WRITE)
 		
 		access_type_caloe mode;
 		

@@ -392,8 +392,8 @@ void print_access_caloe(access_caloe * access) {
 		case WRITE: 
 		printf("Operation: WRITE\n");
 		break;
-		case WCHAINED:
-		printf("Operation: CHAINED WRITE\n");
+		case READ_WRITE:
+		printf("Operation: WRITE AFTER READ\n");
 		break;
 		case SCAN: 
 		printf("Operation: SCAN\n");
@@ -1078,15 +1078,15 @@ int write_caloe(access_caloe * access) {
    return ALL_OK;
 }
 
-int write_chained_caloe(access_caloe * access) {
+int write_after_read_caloe(access_caloe * access) {
 	eb_data_t mask = access->mask;
 	mask_oper_caloe mask_oper = access->mask_oper;
 
 	int rcode;
 
-	if(access->mode != WCHAINED) {
+	if(access->mode != READ_WRITE) {
 			if(VERBOSE_CALOE)
-				fprintf(stderr,"ERROR: Invalid chained write operation \n");
+				fprintf(stderr,"ERROR: Invalid write after read operation \n");
       		
       		return INVALID_OPERATION;
   	}
@@ -1104,7 +1104,7 @@ int write_chained_caloe(access_caloe * access) {
 	if((rcode = write_caloe(access)) != ALL_OK)
 		return rcode;
 
-	access->mode = WCHAINED;
+	access->mode = READ_WRITE;
 
 	access->mask = mask;
 	access->mask_oper = mask_oper;
@@ -1222,8 +1222,8 @@ int execute_native_caloe(access_caloe * access) {
 			case WRITE:	
 				rcode = write_caloe(access);
 			break;
-			case WCHAINED:
-				rcode = write_chained_caloe(access);
+			case READ_WRITE:
+				rcode = write_after_read_caloe(access);
 			break;
 			case SCAN: 
 				rcode = scan_caloe(access);
@@ -1305,7 +1305,7 @@ int execute_tools_caloe(access_caloe * access) {
 
 			close(pipefd[1]);
 			
-			if(access->mode == WCHAINED)
+			if(access->mode == READ_WRITE)
 				access->mode = READ;
 
 			switch(access->mode) {
@@ -1344,7 +1344,7 @@ int execute_tools_caloe(access_caloe * access) {
 		
 					died= wait(&status);
 					
-					if(access->mode == READ || access->mode == WCHAINED) {
+					if(access->mode == READ || access->mode == READ_WRITE) {
 						sscanf(buffer,"%x",&v);
 						
 						if(mask_oper_aux == MASK_OR) {
@@ -1354,7 +1354,7 @@ int execute_tools_caloe(access_caloe * access) {
 							access->value = v & mask_aux;
 						}
 						
-						if(access->mode == WCHAINED) {
+						if(access->mode == READ_WRITE) {
 							access->mode = WRITE;
 							access->mask = 0x00;
 							access->mask_oper = MASK_OR;
@@ -1363,7 +1363,7 @@ int execute_tools_caloe(access_caloe * access) {
 							
 							access->mask = mask_aux;
 							access->mask_oper = mask_oper_aux;
-							access->mode = WCHAINED;
+							access->mode = READ_WRITE;
 						}
 					}
 					else {

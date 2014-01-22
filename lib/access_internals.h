@@ -108,7 +108,7 @@ typedef enum align_access_caloe {SIZE_1B /**< Byte aligned */,
 typedef enum access_type_caloe {READ /**< Read memory address.*/,
 				WRITE /**< Write memory address. */,
 				SCAN /**< Scan device memory map **/,
-				WCHAINED /**< Read a memory address and then write a value in it. It's useful if you want to change a few bits and hold the rest. */
+				READ_WRITE /**< Read a memory address and then write a value in it. It's useful if you want to change a few bits and hold the rest. */
 				} access_type_caloe;
 
 
@@ -289,7 +289,7 @@ int write_caloe(access_caloe * access);
 
 /**
 *
-* It implements chained write access over Etherbone library. Chained write 
+* It implements write after read access over Etherbone library. write after read 
 * is a special kind of write that reads actual value in register, apply a mask to it and write 
 * result into register again.
 *
@@ -300,7 +300,7 @@ int write_caloe(access_caloe * access);
 *
 **/
 
-int write_chained_caloe(access_caloe * access);
+int write_after_read_caloe(access_caloe * access);
 
 /**
 *
@@ -318,7 +318,7 @@ int scan_caloe(access_caloe * access);
 
 /**
 *
-* It implements one access (read, write, chained write or scan). This function calls write_caloe, read_caloe, write_chained_caloe or scan_caloe
+* It implements one access (read, write, write after read or scan). This function calls write_caloe, read_caloe, write_write_after_read_caloe or scan_caloe
 *
 * @param access It contains all information about access
 *
@@ -331,7 +331,7 @@ int execute_native_caloe(access_caloe * access);
 
 /**
 *
-* It implements one access (read, write, chained write or scan). This function calls etherbone tools (eb-read, eb-write and eb-ls)
+* It implements one access (read, write, write after read or scan). This function calls etherbone tools (eb-read, eb-write and eb-ls)
 *
 * @param access It contains all information about access
 * 
@@ -344,7 +344,7 @@ int execute_tools_caloe(access_caloe * access);
 
 /**
 *
-* It implements one access (read, write, chained write or scan). This function calls etherbone tools (eb-read, eb-write and eb-ls) or use Etherbone API library
+* It implements one access (read, write, write after read or scan). This function calls etherbone tools (eb-read, eb-write and eb-ls) or use Etherbone API library
 * instead of EXECUTE_CALOE_MODE macro (1 = with eb-tools, 0 = with Etherbone API directly)
 *
 * @param access It contains all information about access

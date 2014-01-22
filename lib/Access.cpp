@@ -360,7 +360,7 @@ ParamConfig Access::loadAccessCfgFile(ifstream & file) {
 					break;
 					case 'S': mode_v = SCAN;
 					break;
-					case 'C': mode_v = WCHAINED;
+					case 'C': mode_v = READ_WRITE;
 					break;
 					default: mode_v = SCAN;
 					break;
@@ -452,8 +452,8 @@ ostream & operator<<(ostream & os, Access & access) {
 		case SCAN:
 			os << "Operation: SCAN"<<endl;
 		break;
-		case WCHAINED:
-			os << "Operation: CHAINED WRITE"<<endl;
+		case READ_WRITE:
+			os << "Operation: WRITE AFTER READ"<<endl;
 		break;
 	}
 
@@ -520,7 +520,7 @@ istream & operator>>(istream & is, Access & access) {
 		access.is_config = false;
 	}
 
-	cout << "mode (w: write, r: read, c: chained write, s: scan): ";
+	cout << "mode (w: write, r: read, c: write after read, s: scan): ";
 
 	char mode;
 
@@ -542,7 +542,7 @@ istream & operator>>(istream & is, Access & access) {
 				access.mode = SCAN;
 			}
 			else {
-				access.mode = WCHAINED;
+				access.mode = READ_WRITE;
 			}
 		}
 	}
