@@ -227,6 +227,9 @@ void Dio::showConfigChs(string ip) {
 		case 0x1:
 			cout <<"Connected to DIO core"<<endl;
 			break;
+		case 0x2:
+			cout <<"Connected to Clock"<<endl;
+			break;
 		default:
 			cout <<"Undefined"<<endl;
 			break;
@@ -252,6 +255,9 @@ void Dio::showConfigChs(string ip) {
 			break;
 		case 0x1:
 			cout <<"Connected to DIO core"<<endl;
+			break;
+		case 0x2:
+			cout <<"Connected to Clock"<<endl;
 			break;
 		default:
 			cout <<"Undefined"<<endl;
@@ -279,6 +285,9 @@ void Dio::showConfigChs(string ip) {
 		case 0x1:
 			cout <<"Connected to DIO core"<<endl;
 			break;
+		case 0x2:
+			cout <<"Connected to Clock"<<endl;
+			break;
 		default:
 			cout <<"Undefined"<<endl;
 			break;
@@ -305,6 +314,9 @@ void Dio::showConfigChs(string ip) {
 		case 0x1:
 			cout <<"Connected to DIO core"<<endl;
 			break;
+		case 0x2:
+			cout <<"Connected to Clock"<<endl;
+			break;
 		default:
 			cout <<"Undefined"<<endl;
 			break;
@@ -330,6 +342,9 @@ void Dio::showConfigChs(string ip) {
 			break;
 		case 0x1:
 			cout <<"Connected to DIO core"<<endl;
+			break;
+		case 0x2:
+			cout <<"Connected to Clock"<<endl;
 			break;
 		default:
 			cout <<"Undefined"<<endl;
