@@ -160,12 +160,17 @@ string Vuart::readString(string ip, unsigned long period) {
 	bool valid;
 	string s;
 	
+	// Read first character
 	c = read(ip,valid);
 	
+	// While there is other valid character...
 	while(valid) {
+		// Store it
 		s.push_back(c);
+		// Read it
 		c = read(ip,valid);
 		
+		// Wait for a period
 		if(period != 0)
 			usleep(period);
 	}
@@ -176,10 +181,14 @@ string Vuart::readString(string ip, unsigned long period) {
 void Vuart::writeString(string ip, string s, unsigned long period) {
 	string::iterator it;
 	
+	// For each character in string
 	for(it = s.begin() ; it != s.end() ; it++) {
+		// Wait until vuart is ready
 		while(!isReady(ip)) {}
+		// Write character
 		write(ip,*it);
 			
+		// Wait for a period
 		if(period != 0)
 			usleep(period);
 	}
@@ -188,9 +197,12 @@ void Vuart::writeString(string ip, string s, unsigned long period) {
 void Vuart::flush(string ip) {
 	bool valid = false;
 	
+	// Read first character
 	this->read(ip,valid);
 	
+	// While there is other valid character...
 	while(valid) {
+		// Read it
 		this->read(ip,valid);
 	}
 }
@@ -202,22 +214,31 @@ string Vuart::execute_cmd(string ip, string cmd) {
 	
 	string::iterator it;
 	
+	// For each character in string
 	for(it = cmd.begin() ; it != cmd.end() ; it++) {
+		// If vuart is ready...
 		if(this->isReady(ip)) {
+			// Write it
 			this->write(ip,*it);
 		}
 	}
 	
+	// Write end of command (it is necessary for vuart)
 	if(this->isReady(ip))
 		this->write(ip,0xd);
 		
+	// Wait for a period
 	if(WAIT_VUART > 0)
 		usleep(WAIT_VUART);
 	
+	// First read character from vuart
 	data = this->read(ip,valid);
 	
+	// While there is other valid character...
 	while(valid) {
+		// Store it
 		res.push_back(data);
+		// Read it
 		data = this->read(ip,valid);
 	}
 	

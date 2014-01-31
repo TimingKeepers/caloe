@@ -37,7 +37,7 @@ using namespace std;
 
 namespace caloe {
 
-/** @brief Contains a hash table of operation asociated with device **/
+/** @brief Contains an hash table of the operation asociated with the device **/
 
 class Device {
 	private:
@@ -56,18 +56,18 @@ class Device {
 		
 		Device();
 		
-		/** @brief Device constructor from another Device instance 
+		/** @brief Device constructor from other Device instance 
 		 *
-		 *  @param dev Instance to be copied 
+		 *  @param dev Instance to copy 
 		 **/
 		 
 		Device(const Device & dev);
 		
 		/** @brief Device Asignment operator 
 		 *
-		 *  @param dev Intance to be copied
+		 *  @param dev Intance to copy
 		 * 
-		 *  @return Device reference of new instance 
+		 *  @return New Device instance 
 		 **/
 		 
 		Device operator=(const Device & dev);
@@ -83,14 +83,14 @@ class Device {
 		 
 		void setName(string name);
 		
-		/** @brief Add new operation to device table 
+		/** @brief Add new operation to the device table 
 		 * 
-		 * @param op New operation to be added 
+		 * @param op New operation to add
 		 */
 		 
 		void addOperation(const Operation & op);
 		
-		/** @brief Reset an operation asociated to device
+		/** @brief Reset an operation asociated to the device
  		 * 
  		 * @param name Operation name
  		 * 
@@ -98,11 +98,11 @@ class Device {
 		 
 		void reset(string name);
 		
-		/** @brief Execute an operation asociated to device
+		/** @brief Execute an operation asociated to the device
  		 * 
  		 * @param name Operation name
  		 * 
- 		 * @param params User parameters for operation
+ 		 * @param params User parameters for the operation
  		 * 
  		 * @return a vector with read values by operation
  		 * 
@@ -110,9 +110,9 @@ class Device {
 		 
 		vector<eb_data_t> execute(string name,ParamOperation & params);
 		
-		/** @brief Load a device from input configuration file
+		/** @brief Load a device from the input configuration file
 		 *  
-		 * @param path absolute/relative path of configuration file
+		 * @param path absolute/relative path of the configuration file
 		 * 
 		 * @param name_dev Device name
 		 * 
@@ -131,11 +131,11 @@ class Device {
 		 
 		friend ostream & operator<<(ostream & os, Device & dev);
 		
-		/** @brief Fill Device information from input stream
+		/** @brief Fill Device information from the input stream
 		 * 
 		 *  @param is Input stream
 		 * 
-		 *  @param nc Device instance to be filled
+		 *  @param nc Device instance to fill
 		 * 
 		 *  @return Updated input stream
 		 */

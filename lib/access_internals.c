@@ -32,6 +32,9 @@
 * You can get more information in http://www.ohwr.org/projects/etherbone-core
 **/
 
+// The code of this function is based on eb-read tool code (its comments has also been included)
+// Please, see http://www.ohwr.org/projects/etherbone-core if you want to get more information
+
 static void read_callback_caloe(eb_user_data_t user, eb_device_t dev, eb_operation_t op, eb_status_t status) {
 	int* stop = (int*)user;
   	*stop = 1;
@@ -65,6 +68,9 @@ static void read_callback_caloe(eb_user_data_t user, eb_device_t dev, eb_operati
 * write callback function. It is necessary to Etherbone library.
 * You can get more information in http://www.ohwr.org/projects/etherbone-core
 **/
+
+// The code of this function is based on eb-write tool code (its comments has also been included)
+// Please, see http://www.ohwr.org/projects/etherbone-core if you want to get more information
 
 static void write_callback_caloe(eb_user_data_t user, eb_device_t dev, eb_operation_t op, eb_status_t status) {
   int* stop = (int*)user;
@@ -111,6 +117,9 @@ static int print_id(struct bus_record* br) {
 
 /// This function is based on Etherbone tools (eb-ls). You can get more information in http://www.ohwr.org/projects/etherbone-core.
 
+// The code of this function is based on eb-ls tool code (its comments has also been included)
+// Please, see http://www.ohwr.org/projects/etherbone-core if you want to get more information
+
 static void verbose_product(const struct sdb_product* product) {
   fprintf(stdout, "  product.vendor_id:        %016"PRIx64"\n", product->vendor_id);
   fprintf(stdout, "  product.device_id:        %08"PRIx32"\n",  product->device_id);
@@ -121,6 +130,9 @@ static void verbose_product(const struct sdb_product* product) {
 }
 
 /// This function is based on Etherbone tools (eb-ls). You can get more information in http://www.ohwr.org/projects/etherbone-core.
+
+// The code of this function is based on eb-ls tool code (its comments has also been included)
+// Please, see http://www.ohwr.org/projects/etherbone-core if you want to get more information
 
 static void verbose_component(const struct sdb_component* component, struct bus_record* br) {
   fprintf(stdout, "  sdb_component.addr_first: %016"PRIx64, component->addr_first);
@@ -146,6 +158,9 @@ static void verbose_component(const struct sdb_component* component, struct bus_
 * scan callback function. It is necessary to Etherbone library.
 * You can get more information in http://www.ohwr.org/projects/etherbone-core
 **/
+
+// The code of this function is based on eb-ls tool code (its comments has also been included)
+// Please, see http://www.ohwr.org/projects/etherbone-core if you want to get more information
 
 static void scan_callback_caloe(eb_user_data_t user, eb_device_t dev, const struct sdb_table* sdb, eb_status_t status) {
   struct bus_record br;
@@ -425,6 +440,9 @@ void print_access_caloe(access_caloe * access) {
 	print_network_con_caloe(&(access->networkc));
 	printf("\n--------------------------------------\n");
 }
+
+// The code of this function is based on eb-read tool code (its comments has also been included)
+// Please, see http://www.ohwr.org/projects/etherbone-core if you want to get more information
 
 int read_caloe(access_caloe * access) {
   int stop;
@@ -739,6 +757,9 @@ int read_caloe(access_caloe * access) {
 
    return ALL_OK;
 }
+
+// The code of this function is based on eb-write tool code (its comments has also been included)
+// Please, see http://www.ohwr.org/projects/etherbone-core if you want to get more information
 
 int write_caloe(access_caloe * access) {
 
@@ -1111,6 +1132,9 @@ int write_after_read_caloe(access_caloe * access) {
 
 	return ALL_OK;
 }
+
+// The code of this function is based on eb-ls tool code (its comments has also been included)
+// Please, see http://www.ohwr.org/projects/etherbone-core if you want to get more information
 
 int scan_caloe(access_caloe * access) {
   

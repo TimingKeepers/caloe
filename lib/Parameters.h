@@ -69,17 +69,17 @@ namespace caloe {
 #define PARAM_PORT 0x01
 
 /**
- * @brief User parameters for Access
+ * @brief User parameters for an Access
  */
 
 class ParamAccess {
 	private:
 		
-		/// It is used to specify parameters of Access given for user (see defines)
+		/// It is used to specify parameters of an Access given by user (see the DEFINE macros above)
 		
 		char parameters;
 
-		/// User netaddress IP
+		/// User IP netaddress
 		
 		string netaddress;
 		
@@ -87,11 +87,11 @@ class ParamAccess {
 		
 		unsigned int port;
 		
-		/// User offset (is an index to ParamConfig offset vector)
+		/// User offset (is an index to the ParamConfig offset vector)
 		
 		unsigned int offset;
 		
-		/// User mask (is an index to ParamConfig mask vector)
+		/// User mask (is an index to the ParamConfig mask vector)
 		
 		unsigned int mask;
 		
@@ -105,18 +105,18 @@ class ParamAccess {
 		
 		ParamAccess();
 		
-		/** @brief ParamAccess constructor from another ParamAccess instance 
+		/** @brief ParamAccess constructor from other ParamAccess instance 
 		 *
-		 *  @param vuart Instance to be copied 
+		 *  @param vuart Instance to copy
 		 **/
 		 
 		ParamAccess(const ParamAccess & pa);
 		
 		/** @brief ParamAccess Asignment operator 
 		 *
-		 *  @param pa Intance to be copied
+		 *  @param pa Intance to copy
 		 * 
-		 *  @return ParamAccess reference of new instance 
+		 *  @return New ParamAccess instance 
 		 **/
 		 
 		ParamAccess operator=(const ParamAccess & pa);
@@ -172,7 +172,7 @@ class ParamAccess {
 		
 		unsigned int getMask() const;
 		
-		/** @brief Get parameter metadata  **/
+		/** @brief Get parameter metadata (param mask)  **/
 		
 		char getParametersMask() const;
 		
@@ -180,7 +180,7 @@ class ParamAccess {
 		
 		int getValue() const;
 		
-		/** @brief Reset user parameter metadata **/
+		/** @brief Reset user parameter metadata (param mask set to PARAM_NONE value again) **/
 		
 		void reset();
 		
@@ -199,7 +199,7 @@ class ParamAccess {
 		 * 
 		 *  @param is Input stream
 		 * 
-		 *  @param pa ParamAccess instance to be filled
+		 *  @param pa ParamAccess instance to fill
 		 * 
 		 *  @return Updated input stream
 		 */
@@ -213,13 +213,13 @@ class ParamAccess {
 };
 
 /**
- * @brief User parameters for Operation. It contains a ParamAccess vector
+ * @brief User parameters for an Operation. It contains a ParamAccess vector (one for each access in the operation)
  */
  
 class ParamOperation {
 	private:
 		
-		/// ParamAccess foreach Access of Operation
+		/// ParamAccess foreach Access of the Operation
 		
 		vector <ParamAccess> parameter_values;
 	
@@ -229,27 +229,25 @@ class ParamOperation {
 		
 		ParamOperation();
 		
-		/** @brief ParamOperation constructor from another ParamOperation instance 
+		/** @brief ParamOperation constructor from other ParamOperation instance 
 		 *
-		 *  @param po Instance to be copied 
+		 *  @param po Instance to copy
 		 **/
 		 
 		ParamOperation(const ParamOperation & po);
 		
 		/** @brief ParamOperation Asignment operator 
 		 *
-		 *  @param po Intance to be copied
+		 *  @param po Intance to copy
 		 * 
-		 *  @return ParamOperation reference of new instance 
+		 *  @return New ParamOperation instance 
 		 **/
 		 
 		ParamOperation operator=(const ParamOperation & po);
 		
 		/** @brief Add new user parameter to ParamOperation
 		 * 
-		 *  @param pa ParamAccess to be added
-		 * 
-		 *  @note You must reset ParamAccess if you used it before
+		 *  @param pa ParamAccess to add
 		 * 
 		 */
 		 
@@ -274,7 +272,7 @@ class ParamOperation {
 		 * 
 		 *  @param is Input stream
 		 * 
-		 *  @param po ParamOperation instance to be filled
+		 *  @param po ParamOperation instance to fill
 		 * 
 		 *  @return Updated input stream
 		 */ 
@@ -287,13 +285,13 @@ class ParamOperation {
 };
 
 /**
- * @brief Needed parameters for Access. User must fill ParamAccess with these parameter to execute Access
+ * @brief Needed parameters for an Access. User must fill ParamAccess with these parameters in order to execute the Access.
  */
  
 class ParamConfig {
 	private:
 	
-		/// It is used to specify needed parameters of Access (see defines)
+		/// It is used to specify needed parameters of the Access (see the DEFINE macros above)
 		
 		char parameters;
 
@@ -311,46 +309,46 @@ class ParamConfig {
 		
 		ParamConfig();
 		
-		/** @brief ParamConfig constructor from another ParamConfig instance 
+		/** @brief ParamConfig constructor from other ParamConfig instance 
 		 *
-		 *  @param pc Instance to be copied 
+		 *  @param pc Instance to copy
 		 **/
 		 
 		ParamConfig(const ParamConfig & pc);
 		
 		/** @brief ParamConfig Asignment operator 
 		 *
-		 *  @param pc Intance to be copied
+		 *  @param pc Intance to copy
 		 * 
-		 *  @return ParamConfig reference of new instance 
+		 *  @return New ParamConfig instance 
 		 **/
 		 
 		ParamConfig operator=(const ParamConfig & pc);
 		
 		/** @brief Set Offset vector
 		 *  
-		 *  @param offsets Offset vector for Access
+		 *  @param offsets Offset vector for the Access
 		 */
 		 
 		void setOffsetsParam(vector<int> offsets);
 		
 		/** @brief Set mask vector
 		 *  
-		 *  @param masks Mask vector for Access
+		 *  @param masks Mask vector for the Access
 		 */
 		 
 		void setMasksParam(vector<int> masks);
 		
-		/** @brief Set mask vector from string
+		/** @brief Set mask vector from the string
 		 *  
-		 *  @param masks Mask vector for Access
+		 *  @param masks Mask vector for the Access
 		 */
 		
 		void setMasksString(string masks);
 		
-		/** @brief Set Offset vector from string
+		/** @brief Set Offset vector from the string
 		 *  
-		 *  @param offsets Offset vector for Access
+		 *  @param offsets Offset vector for the Access
 		 */
 		 
 		void setOffsetsString(string offsets);
@@ -394,7 +392,7 @@ class ParamConfig {
 		 * 
 		 *  @param is Input stream
 		 * 
-		 *  @param pc ParamConfig instance to be filled
+		 *  @param pc ParamConfig instance to fill
 		 * 
 		 *  @return Updated input stream
 		 */

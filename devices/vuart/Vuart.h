@@ -51,9 +51,9 @@ class Vuart {
 		
 		Vuart();
 		
-		/** @brief Vuart constructor from another Vuart instance 
+		/** @brief Vuart constructor from other Vuart instance 
 		 *
-		 *  @param vuart Instance to be copied 
+		 *  @param vuart Instance to copy 
 		 **/
 		 
 		Vuart(const Vuart & vuart);
@@ -67,9 +67,9 @@ class Vuart {
 		
 		/** @brief Vuart Asignment operator 
 		 *
-		 *  @param vuart Intance to be copied
+		 *  @param vuart Intance to copy
 		 * 
-		 *  @return Vuart reference of new instance 
+		 *  @return New Vuart instance 
 		 **/
 		 
 		Vuart & operator=(const Vuart & vuart);
@@ -80,7 +80,7 @@ class Vuart {
 		
 		/** @brief Check if vuart is ready to be written 
 		 *
-		 *  @param ip Etherbone server Netaddress IP 
+		 *  @param ip Etherbone IP address
 		 * 
 		 *  @return it returns true if Vuart is ready to write again or false otherwise
 		 *
@@ -90,9 +90,9 @@ class Vuart {
 		
 		/** @brief Read a character from vuart 
 		 * 
-		 *  @param ip Etherbone server Netaddress IP 
+		 *  @param ip Etherbone IP Netaddress
 		 * 
-		 *  @param valid It used to confirm if returned value is valid or not
+		 *  @param valid It used to check if returned value is valid or not
 		 * 
 		 *  @return Read character from vuart
 		 **/
@@ -133,9 +133,9 @@ class Vuart {
 		 
 		void writeString(string ip, string s,unsigned long period);
 		
-		/**  @brief Flush virtual uart buffer
+		/**  @brief Flush virtual uart buffer (remove all unread characters)
 		 * 
-		 *   @param ip Etherbone server Netaddress IP 
+		 *   @param ip Etherbone IP Netaddress
 		 * 
 		 **/
 		
@@ -143,7 +143,7 @@ class Vuart {
 		
 		/**  @brief Execute one virtual uart command and wait for response
 		 * 
-		 *   @param ip Etherbone server Netaddress IP 
+		 *   @param ip Etherbone IP Netaddress
 		 * 
 		 *   @param s cmd Command to execute
 		 * 

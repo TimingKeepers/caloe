@@ -38,24 +38,24 @@ using namespace std;
 
 namespace caloe {
 
-/**@brief Wrapper of access_caloe internals **/
+/**@brief Contains all information about an Access (it uses access_internals) **/
 
 class Access {
 	private:
 		
-		/// Init Memory address to access
+		/// Init Memory address of the access
 		
 		eb_address_t address_init;
 		
-		/// Memory address to access
+		/// Memory address of the access
 		
 		eb_address_t address; 
 		
-		/// Offset to be applied to address
+		/// Offset to be added on address
 		
 		eb_address_t offset; 
 		
-		/// Value to write or read value
+		/// Value to write / read value
 		
 		eb_data_t value; 
 		
@@ -99,16 +99,16 @@ class Access {
 		
 		/** @brief Access constructor from another Access instance 
 		 *
-		 *  @param access Access to be copied 
+		 *  @param access Access to copy
 		 **/
 		 
 		Access(const Access & access);
 		
 		/** @brief Access Asignment operator 
 		 *
-		 *  @param access Intance to be copied
+		 *  @param access Intance to copy
 		 * 
-		 *  @return Access reference of new instance 
+		 *  @return New Access instance 
 		 **/
 		 
 		Access operator=(const Access & access);
@@ -137,7 +137,7 @@ class Access {
 		
 		mask_oper_caloe getMaskOper() const;
 		
-		/** @brief Check if access is refered to Etherbone configuration space **/
+		/** @brief Check if the access is refered to Etherbone configuration space **/
 		
 		bool getIsConfig() const;
 		
@@ -199,9 +199,9 @@ class Access {
 		 
 		void setMaskOper(mask_oper_caloe mask_oper);
 		
-		/** @brief Mark if access is refered to Etherbone configuration space or not
+		/** @brief Mark if the access is refered to Etherbone configuration space or not
 		 * 
-		 * @param is_config If is refered to Etherbone config space (true) or not (false)
+		 * @param is_config If it is refered to Etherbone config space (true) or not (false)
 		 **/
 		 
 		void setIsConfig(bool is_config);
@@ -222,7 +222,7 @@ class Access {
 		
 		/** @brief Set autoincrement/decrement parameter 
 		 * 
-		 * @param autoincr Autoincrement/decrement to address
+		 * @param autoincr Value to be added on address
 		 **/
 		 
 		void setAutoincr(int autoincr);
@@ -234,24 +234,24 @@ class Access {
 		 
 		void setNetCon(Netcon networkc);
 		
-		/** @brief Reset access field
+		/** @brief Reset the access (for autoincrement/decrement accesses, it restores initial address)
 		 * 
 		 **/
 		 
 		void reset();
 		
-		/** @brief Execute access
+		/** @brief Execute the access
 		 * 
 		 * @return ALL_OK if success or error code otherwise
 		 **/
 		 
 		int execute();
 		
-		/** @brief it loads an access from input configuration file
+		/** @brief it loads an access from the input configuration file
 		 * 
 		 * @param file Input stream
 		 * 
-		 * @return Needed parameters for access
+		 * @return Needed parameters for the access
 		 **/
 		 
 		ParamConfig loadAccessCfgFile(ifstream & file);
@@ -271,7 +271,7 @@ class Access {
 		 * 
 		 *  @param is Input stream
 		 * 
-		 *  @param access Access instance to be filled
+		 *  @param access Access instance to fill
 		 * 
 		 *  @return Updated input stream
 		 */

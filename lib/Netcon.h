@@ -59,7 +59,7 @@ class Netcon {
 		
 		/** @brief Netcon constructor with arguments 
 		 *
-		 *  @param ip Netaddress IP
+		 *  @param ip IP netaddress
 		 * 
 		 *  @param port Network port
 		 *  
@@ -69,16 +69,16 @@ class Netcon {
 		
 		/** @brief Netcon constructor from another Netcon instance 
 		 *
-		 *  @param nc Instance to be copied 
+		 *  @param nc Instance to be copy
 		 **/
 		 
 		Netcon(const Netcon & nc);
 		
 		/** @brief Netcon Asignment operator 
 		 *
-		 *  @param nc Intance to be copied
+		 *  @param nc Intance to copy
 		 * 
-		 *  @return Netcon reference of new instance 
+		 *  @return New Netcon instance 
 		 **/
 		 
 		Netcon operator=(const Netcon & nc);
@@ -120,7 +120,7 @@ class Netcon {
 		 * 
 		 *  @param is Input stream
 		 * 
-		 *  @param nc Netcon instance to be filled
+		 *  @param nc Netcon instance to fill
 		 * 
 		 *  @return Updated input stream
 		 */

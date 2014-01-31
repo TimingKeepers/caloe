@@ -82,9 +82,9 @@ class Dio {
 		
 		Dio();
 		
-		/** @brief Dio constructor from another Dio instance 
+		/** @brief Dio constructor from other Dio instance 
 		 *
-		 *  @param dio Instance to be copied 
+		 *  @param dio Instance to copy
 		 **/
 		 
 		Dio(const Dio & dio);
@@ -98,9 +98,9 @@ class Dio {
 		
 		/** @brief Dio Asignment operator 
 		 *
-		 *  @param dio Intance to be copied
+		 *  @param dio Intance to copy
 		 * 
-		 *  @return Dio reference of new instance 
+		 *  @return New Dio instance 
 		 **/
 		 
 		Dio & operator=(const Dio & dio);
@@ -123,7 +123,7 @@ class Dio {
 		 * 
 		 *  @param ch Index of Dio channel
 		 * 
-		 *  @param mode Dio channel mode (i/I: input, d/D:output) 
+		 *  @param mode Dio channel mode (i: Input without resistor, I: Input with resistor, d: output without resistor, D: output with resistor) 
 		 */
 		 
 		void configCh(string ip,int ch, char mode);
@@ -141,12 +141,12 @@ class Dio {
 		 * 
 		 * @param ch Index of Dio channel
 		 * 
-		 * @param len_pulse Pulse width
+		 * @param len_pulse Pulse width (in cycles)
 		 */
 		 
 		void pulseImm(string ip, int ch, int len_pulse);
 		
-		/** @brief Check if Dio is ready to generate another programmable pulse
+		/** @brief Check if Dio is ready to generate other programmable pulse
 		 * 
 		 * @param ip IP Netaddress
 		 * 
@@ -163,9 +163,9 @@ class Dio {
 		 * 
 		 * @param ch Index of Dio channel
 		 * 
-		 * @param len_pulse Pulse width
+		 * @param len_pulse Pulse width (in cycles)
 		 * 
-		 * @param t_trig time when pulse will be trigged
+		 * @param t_trig time when pulse will be trigged (in seconds and nanoseconds)
 		 */
 		 
 		void pulseProg(string ip, int ch, int len_pulse, timespec t_trig);

@@ -30,6 +30,7 @@
 namespace caloe {
 
 Access::Access() {
+	//Default Access values
 	address = 0x00;
 	address_init = 0x00;
 	offset = 0x00;
@@ -186,10 +187,13 @@ int Access::execute() {
 
 	char aux[50];
 
+	// Copy IP address to an aux string
 	strcpy(aux,networkc.getIP().c_str());
 
+	// Build an network_connection struct of access_internals
 	build_network_con_full_caloe(aux,networkc.getPort(),&nc);
 
+	// Parsing boolean value to integer
 	if(is_config) {
 		is_config_int=1;
 	}
@@ -197,16 +201,21 @@ int Access::execute() {
 		is_config_int = 0;
 	}
 
+	// Build an access_caloe struct of access_internals
 	build_access_caloe(address,offset,value,mask,mask_oper,is_config_int,mode,align,&nc,&access);
 	
+	// Execute the access_caloe struct
 	rcode = execute_caloe(&access);
 
+	// If access type is READ, store read value
 	if(mode == READ) {
 		value = access.value;
 	}
 
+	// Free access_caloe and network_connection memory
 	free_access_caloe(&access);
 	
+	// Parsing alignment to integer
 	int align_v;
 	
 	switch(align) {
@@ -220,6 +229,7 @@ int Access::execute() {
 					  break;
 	};
 	
+	// Update address with autoincr value 
 	address += (autoincr*align_v);
 
 	return rcode;

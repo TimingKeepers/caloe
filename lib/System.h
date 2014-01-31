@@ -37,7 +37,7 @@ using namespace std;
 namespace caloe {
 
 /**
- * @brief Top class in CALoE library. It contains a hash table with all devices in your system. You must load their operation tables from input configuration files. 
+ * @brief Top class in CALoE library. It contains an hash table with all devices in your system. You must load their operation tables from input configuration files. 
  */
 
 class System {
@@ -51,31 +51,31 @@ class System {
 		
 		System();
 		
-		/** @brief System constructor from another System instance 
+		/** @brief System constructor from other System instance 
 		 *
-		 *  @param sys Instance to be copied 
+		 *  @param sys Instance to copy
 		 **/
 		 
 		System(const System & sys);
 		
 		/** @brief System Asignment operator 
 		 *
-		 *  @param sys Intance to be copied
+		 *  @param sys Intance to copy
 		 * 
-		 *  @return System reference of new instance 
+		 *  @return New System instance 
 		 **/
 		 
 		System operator=(const System & sys);
 		
-		/** @brief Add a new device to system
+		/** @brief Add a new device to the system
 		 * 
-		 *  @param dev new device to be added
+		 *  @param dev new Device to add
 		 *
 		 */
 		 
 		void addDevice(const Device & dev);
 		
-		/** @brief Reset an operation of a specific device
+		/** @brief Reset an operation of a specific device (for autoincrement/decrement accesses, it restores initial address)
 		 * 
 		 * @param name_dev Device name
 		 * 
@@ -85,7 +85,7 @@ class System {
 		 
 		void reset(string name_dev,string name_oper);
 		
-		/** @brief Execute an operation of one registered device in system table
+		/** @brief Execute an operation of one registered device in the system table
 		 * 
 		 * @param name_dev Device name
 		 * 
@@ -93,14 +93,14 @@ class System {
 		 * 
 		 * @param params User needed parameters for Operation
 		 * 
-		 * @return A vector with all read data of operation
+		 * @return A vector with all read data by the operation
 		 */
 		 
 		vector<eb_data_t> execute(string name_dev, string name_oper, ParamOperation & params);
 		
-		/** @brief Load a device from input configuration file and add it to system table
+		/** @brief Load a device from an input configuration file and add it to the system table
 		 * 
-		 *  @param path absolute/relative path of configuration file
+		 *  @param path Absolute/relative path of configuration file
 		 * 
 		 *  @param name_dev Device name
 		 * 
@@ -108,7 +108,7 @@ class System {
 		 
 		void loadCfgFile(string path,string name_dev);
 		
-		/** @brief Print system information
+		/** @brief Print the system information
 		 * 
 		 *  @param os Output stream
 		 * 
@@ -119,11 +119,11 @@ class System {
 		 
 		friend ostream & operator<<(ostream & os, System & sys);
 		
-		/** @brief Fill system information from input stream
+		/** @brief Fill the system information from an input stream
 		 * 
 		 *  @param is Input stream
 		 * 
-		 *  @param sys System instance to be filled
+		 *  @param sys System instance to fill
 		 * 
 		 *  @return Updated input stream
 		 */

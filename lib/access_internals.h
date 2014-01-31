@@ -73,7 +73,7 @@
 /// Timeout (ms) to read/write operations (-1: NOT LIMITED)
 #define TIMEOUT_LIMIT -1
 
-/// Time gap between access (usecs, 0: no-wait)
+/// Time gap (sleep) between access (usecs, 0: no-wait)
 #define SLEEP_ACCESS 0
 
 /// Verbose mode (0: disabled, 1: enabled)
@@ -271,19 +271,25 @@ void print_access_caloe(access_caloe * access);
 *
 **/
 
+// The code of this function is based on eb-read tool code (its comments has also been included)
+// Please, see http://www.ohwr.org/projects/etherbone-core if you want to get more information
+
 int read_caloe(access_caloe * access);
 
 /**
 *
 * It implements write access over Etherbone library
 *
-* @param acces It contains all information about access (value field contains value to write)
+* @param access It contains all information about access (value field contains value to write)
 *
 * @return Error code if error or zero otherwise
 *
 * @note Value field of access is written into memory address
 *
 **/
+
+// The code of this function is based on eb-write tool code (its comments has also been included)
+// Please, see http://www.ohwr.org/projects/etherbone-core if you want to get more information
 
 int write_caloe(access_caloe * access);
 
@@ -314,11 +320,14 @@ int write_after_read_caloe(access_caloe * access);
 *
 **/
 
+// The code of this function is based on eb-ls tool code (its comments has also been included)
+// Please, see http://www.ohwr.org/projects/etherbone-core if you want to get more information
+
 int scan_caloe(access_caloe * access);
 
 /**
 *
-* It implements one access (read, write, write after read or scan). This function calls write_caloe, read_caloe, write_write_after_read_caloe or scan_caloe
+* It implements one access (read, write, write after read or scan). This function calls write_caloe, read_caloe, write_after_read_caloe or scan_caloe
 *
 * @param access It contains all information about access
 *

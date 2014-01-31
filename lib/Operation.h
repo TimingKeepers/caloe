@@ -77,16 +77,16 @@ class Operation {
 		
 		/** @brief Operation constructor from another Operation instance 
 		 *
-		 *  @param op Instance to be copied 
+		 *  @param op Instance to copy
 		 **/
 		 
 		Operation(const Operation & op);
 		
 		/** @brief Operation Asignment operator 
 		 *
-		 *  @param op Intance to be copied
+		 *  @param op Intance to copy
 		 * 
-		 *  @return Operation reference of new instance 
+		 *  @return New Operation instance 
 		 **/
 		 
 		Operation operator=(const Operation & op);
@@ -121,7 +121,7 @@ class Operation {
 		
 		/** @brief Add new Access to Operation 
 		 * 
-		 * @param access Access to be added
+		 * @param access Access to add
 		 * 
 		 * @param param Specify if Access needs any parameter from user
 		 * 
@@ -129,7 +129,7 @@ class Operation {
 		 
 		void addAccess(const Access & access, const ParamConfig & param);
 		
-		/** @brief Reset all accesses of operation
+		/** @brief Reset all accesses of the operation (for autoincrement/decrement accesses, it restores initial address)
 		 * 
 		 **/
 		 
@@ -139,7 +139,7 @@ class Operation {
 		 * 
 		 * @param params Needed user parameters
 		 * 
-		 * @return Operation read values
+		 * @return Read operation values
 		 */
 		 
 		vector<eb_data_t> execute(ParamOperation & params);
@@ -167,7 +167,7 @@ class Operation {
 		 * 
 		 *  @param is Input stream
 		 * 
-		 *  @param op Operation instance to be filled
+		 *  @param op Operation instance to fill
 		 * 
 		 *  @return Updated input stream
 		 */

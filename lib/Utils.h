@@ -35,20 +35,20 @@ using namespace std;
 
 namespace caloe {
 
-/** @brief Splits a string into a number based on a separator character
+/** @brief Splits a string into several substrings based on a separator character
  *
- *  @param s String to split
+ *  @param s String to be split
  *  @param del Separator character
  *
- *  @return A vector of separated string based on separator character
+ *  @return A String vector that contains all found substrings
 */
 vector<string> split(string s, char del);
 
-/** @brief Join into a string several strings from a vector
+/** @brief Joins a string in several strings from a vector
  *
- *  @param vs Vector to join
+ *  @param vs String vector to be joined
  *
- *  @return All joined string
+ *  @return string with all substrings joined
 */
 string join(vector<string> vs);
 

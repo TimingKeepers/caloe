@@ -80,6 +80,7 @@ void Operation::addAccess(const Access & access, const ParamConfig & param) {
 void Operation::reset() {
 	vector< Access >::iterator it_access;
 	
+	// For each access in the operation, reset it
 	for(it_access = list_access.begin() ; it_access != list_access.end() ; it_access++)
 		it_access->reset();
 }

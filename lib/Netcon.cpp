@@ -30,6 +30,7 @@
 namespace caloe {
 
 Netcon::Netcon() {
+	// Default Etherbone port
 	port = 60368;
 }
 

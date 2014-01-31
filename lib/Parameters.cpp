@@ -129,6 +129,8 @@ void ParamAccess::reset() {
 
 ostream & operator<<(ostream & os, ParamAccess & pa) {
 	int params = (int) pa.parameters;
+	
+	// Print all information about the ParamAccess instance
 
 	os << "Parameters mask: "<<hex<<"0x"<<params<<endl;
 	os <<"Netaddress: "<<pa.netaddress<<endl;
@@ -207,7 +209,7 @@ istream & operator>>(istream & is, ParamOperation & po) {
 		is >> pa;
 		// Add new ParamAccess
 		po.addParameter(pa);
-		// If you want to add new ParamAcces, press 'y'...
+		// If you want to add a new ParamAcces, press 'y' (yes) or 'n' (no) otherwise.
 		cout <<"add new ParamAccess (y/n)?"<<endl;
 		is >> more;
 	} while (more != 'y');
@@ -260,12 +262,12 @@ void ParamConfig::setMasksString(string masks) {
 	vector<string>::iterator it;
 	int mask;
 	
-	// Split in several string and convert them into integer mask
+	// Split into several string and convert them to integer mask
 	
 	s2 = split(masks,',');
 		
 	for(it = s2.begin() ; it != s2.end() ; it++) {
-		// Convert
+		// Convert to integer
 		sscanf (it->c_str(),"%x",&mask);
 		
 		// Add to mask vector
@@ -287,7 +289,7 @@ void ParamConfig::setOffsetsString(string offsets) {
 	s2 = split(offsets,',');
 		
 	for(it = s2.begin() ; it != s2.end() ; it++) {
-		// Convert
+		// Convert to integer
 		sscanf (it->c_str(),"%x",&off);
 			
 		// Add to offset vector

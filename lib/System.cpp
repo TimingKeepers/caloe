@@ -46,10 +46,10 @@ System System::operator=(const System & sys) {
 void System::addDevice(const Device & dev) {
 	pair< map<string,Device>::iterator, bool > ret;
 	
-	// Try to insert device into system
+	// Try to insert a device into the system
 	ret = list_device.insert(make_pair(dev.getName(),dev));
 	
-	// If device exists already in system, print error and return
+	// If the device exists already in the system, print an error and return
 	if(! (ret.second)) {
 		cout << "ERROR: Device "<< dev.getName() <<" already exists!"<<endl;
 		cout << "IGNORING..."<<endl;
@@ -59,17 +59,17 @@ void System::addDevice(const Device & dev) {
 void System::reset(string name_dev, string name_oper) {
 	map<string,Device>::iterator it;
 	
-	// Search device for its name
+	// Search a device for its name
 	it = list_device.find(name_dev);
 
-	// If device is found...
+	// If the device is found...
 	if(it != list_device.end()) {
 		//cout << "DEVICE "<<name_dev<<" found!"<<endl;
 		
-		// Execute operation
+		// Reset the operation
 		(it->second).reset(name_oper);
 	}
-	else { // If not found, print error and return
+	else { // If it is not found, print an error and return
 		cout << "ERROR: Device "<<name_dev<<" not found!"<<endl;
 	}
 }
@@ -78,17 +78,17 @@ vector<eb_data_t> System::execute(string name_dev, string name_oper, ParamOperat
 	map<string,Device>::iterator it;
 	vector<eb_data_t> res;
 
-	// Search device for its name
+	// Search a device for its name
 	it = list_device.find(name_dev);
 
-	// If device is found...
+	// If the device is found...
 	if(it != list_device.end()) {
 		//cout << "DEVICE "<<name_dev<<" found!"<<endl;
 		
-		// Execute operation
+		// Execute an operation
 		res = (it->second).execute(name_oper,params);
 	}
-	else { // If not found, print error and return
+	else { // If it is not found, print an error and return
 		cout << "ERROR: Device "<<name_dev<<" not found!"<<endl;
 	}
 	
@@ -98,10 +98,10 @@ vector<eb_data_t> System::execute(string name_dev, string name_oper, ParamOperat
 void System::loadCfgFile(string path,string name_dev) {
 	Device dev;
 	
-	// Load a device from configuration file
+	// Load a device from a configuration file
 	dev.loadCfgFile(path,name_dev);
 	
-	// Add new device to system
+	// Add the new device on the system
 	addDevice(dev);
 }
 
@@ -111,7 +111,7 @@ ostream & operator<<(ostream & os, System & sys) {
 	os <<endl<<"-----------------------------------------------------------------------"<<endl;
 	os <<"System "<<endl<<endl;
 	
-	// For each device in system...
+	// For each device in the system...
 	for(it = sys.list_device.begin() ; it != sys.list_device.end() ; it++) {
 		// Print its information
 		os << it->second <<endl;
@@ -130,13 +130,13 @@ istream & operator>>(istream & is, System & sys) {
 	do {
 		Device d;
 		
-		// Fill new device
+		// Fill the new device
 		is >> d;
 		
-		// Add new device to system
+		// Add the new device on the system
 		sys.addDevice(d);
 		
-		// If you want to add another device, intro 'y' (yes) and intro 'n' otherwise
+		// If you want to add other device, intro 'y' (yes) or intro 'n' (no) otherwise
 		cout <<"add another device? (y/n): ";
 		is >> cont;
 		

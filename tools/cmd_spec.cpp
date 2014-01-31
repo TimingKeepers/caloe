@@ -30,8 +30,10 @@
 
 using namespace std;
 
+// 1-> It avoid vuart executes gui/stat cont
 #define HIDE_GUI_STAT_CONT 0
 
+// Remove additional characters
 string delete_format_chars(string s) {
 	string s2;
 	int size = s.length();
@@ -44,6 +46,7 @@ string delete_format_chars(string s) {
 	return s2;
 }
 
+// Print vuart command response
 void printf_vuart(string res,string cmd) {
 	vector<string> res_split = split(res,'\n');
 	vector<string>::iterator it;
@@ -63,6 +66,7 @@ void printf_vuart(string res,string cmd) {
 
 int main ()
 {
+  // Load devices (Dio and Vuart)
   Dio dio("../devices/dio/dio.cfg");
   Vuart vuart("../devices/vuart/vuart.cfg");
   
@@ -89,12 +93,13 @@ int main ()
   }
   
   do {
-	  
+	  // Spec prompt
 	  if(!specific_dio_b)
 		cout << "command>> ";
 	  else 
 		cout << "spec@"<<ip<<">> ";
 		
+	  // Read command from user
 	  cin >> cmd;
 	  
 	  if(cmd == "scan") {
@@ -122,7 +127,7 @@ int main ()
 			cout <<endl<<"CHANNEL: ";
 			cin >> ch;
 			
-			cout <<endl<<"PULSE WIDTH: ";
+			cout <<endl<<"PULSE WIDTH (cycles): ";
 			cin >> len_pulse;
 			
 			dio.pulseImm(proto+"/"+ip,ch,len_pulse);
@@ -143,7 +148,7 @@ int main ()
 				cout <<endl<<"CHANNEL: ";
 				cin >> ch;
 			
-				cout <<endl<<"PULSE WIDTH: ";
+				cout <<endl<<"PULSE WIDTH (cycles): ";
 				cin >> len_pulse;
 				
 				cout <<endl<<"TRIG TIME (seconds): ";
@@ -169,7 +174,7 @@ int main ()
 					cout <<endl<<"CHANNEL: ";
 					cin >> ch;
 					
-					cout<<endl<<"MODE (i/I: input, d/D: output): ";
+					cout<<endl<<"MODE (i/I: input/input + R, d/D: output/output + R): ";
 					cin >> mode;
 					
 					dio.configCh(proto+"/"+ip,ch,mode);

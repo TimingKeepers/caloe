@@ -34,16 +34,22 @@ vector<string> split(string s, char del) {
 	string::iterator it;
 	string s2;
 	
+	// For each character of the string...
 	for(it = s.begin() ; it != s.end() ; it++) {
+		// Check if it is a delimiter...
 		if(*it != del) {
+			// If it's not, character is added on an aux string
 			s2.push_back(*it);
 		}
-		else {
+		else { // Otherwise...
+			// the aux string is complete, it can be added on the string vector 
 			s_split.push_back(s2);
+			// Flush the aux string (for the next substring)
 			s2.clear();
 		}
 	}
 	
+	// It is a special case for last substring (it does not have delimiter)
 	if(!s2.empty())
 		s_split.push_back(s2);
 	
@@ -55,9 +61,12 @@ string join(vector<string> vs) {
 	string::iterator it2;
 	string s;
 	
+	// For each string of vector...
 	for(it = vs.begin() ; it != vs.end() ; it++) {
-		string s2 = *it;
+		string s2 = *it; // An aux string
+		// For each character of string...
 		for(it2 = s2.begin() ; it2 != s2.end() ; it2++) {
+			// Add character on the aux string
 			s.push_back(*it2);
 		}
 	}
