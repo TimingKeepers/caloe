@@ -70,14 +70,14 @@
 /// It fails when parser can not understand configuration file corretly
 #define ERROR_PARSE_CONFIG_FILE -13
 
-/// Timeout (ms) to read/write operations (-1: NOT LIMITED)
-#define TIMEOUT_LIMIT -1
+/// Timeout (us) to read/write operations (-1: NOT LIMITED)
+#define TIMEOUT_LIMIT 1000000
 
 /// Time gap (sleep) between access (usecs, 0: no-wait)
 #define SLEEP_ACCESS 0
 
 /// Verbose mode (0: disabled, 1: enabled)
-#define VERBOSE_CALOE 0
+#define VERBOSE_CALOE 1
 
 /// Data buffer to read/write operations with Etherbone library
 static eb_data_t data;

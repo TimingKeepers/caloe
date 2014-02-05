@@ -287,10 +287,10 @@ static void scan_callback_caloe(eb_user_data_t user, eb_device_t dev, const stru
       eb_sdb_scan_bus(dev, &des->bridge, &br, &scan_callback_caloe);
       
       while (!br.stop) {
-		eb_socket_run(eb_device_socket(dev),TIMEOUT_LIMIT);
+		eb_socket_run(eb_device_socket(dev),-1);//TIMEOUT_LIMIT);
 		
 		//if(TIMEOUT_LIMIT != -1) 
-		//	break;
+			//break;
 	  }
 	  
 	  if(!br.stop) {
@@ -1202,7 +1202,7 @@ int scan_caloe(access_caloe * access) {
     fprintf(stdout, "BusPath        VendorID         Product   BaseAddress(Hex)  Description\n");
   
   while (!br.stop) {
-    eb_socket_run(socket,TIMEOUT_LIMIT);
+    eb_socket_run(socket,-1);//TIMEOUT_LIMIT);
     
     //if(TIMEOUT_LIMIT != -1)
 	//	break;
