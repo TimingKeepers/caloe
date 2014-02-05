@@ -1,6 +1,7 @@
 \section{Known issues}
 
 \begin{itemize}
- \item {Etherbone core is not ready to work at high frecuencies because it discards all packets that can not be processed.
+ \item {The Etherbone core is not ready to work at high frecuencies because it discards all packets that can not be processed.
  As a consequence this library is not currently appropiate for large volume data transactions. However, CALoE current goal is to provide a simple event-driven control mechanism.}
+ \item {The scan operation must be blocking in order to work correctly. This is a problem that we will fix in future versions.}
 \end{itemize}
