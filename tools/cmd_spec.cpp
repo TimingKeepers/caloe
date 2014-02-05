@@ -28,10 +28,157 @@
 #include "../devices/dio/Dio.h"
 #include "../devices/vuart/Vuart.h"
 
+#include <arpa/inet.h>
+
 using namespace std;
 
 // 1-> It avoid vuart executes gui/stat cont
 #define HIDE_GUI_STAT_CONT 0
+
+// Number of channels of DIO device
+#define NUMBER_CHS 5
+
+// Max pulse length (28 b in DIO)
+#define MAX_PULSE_LEN 268435455
+
+// Code available at http://stackoverflow.com/questions/791982/determine-if-a-string-is-a-valid-ip-address-in-c
+bool isValidIpAddress(const char *ipAddress)
+{
+	char buff[30];
+
+	strcpy(buff,ipAddress);
+
+	struct sockaddr_in sa;
+	int result = inet_pton(AF_INET, buff, &(sa.sin_addr));
+	return result != 0;
+}
+
+string get_ip() {
+	string ip;
+	do {
+		cout << "IP: ";
+		cin >> ip;
+
+		if(cin.fail()) {
+			cout <<endl<<"Error: CIN istream error!"<<endl;
+			exit(-1);
+		}
+	} while(!isValidIpAddress(ip.c_str()));
+
+	return ip;
+}
+
+char get_specific_spec_mode() {
+	char specific_spec;
+ 	
+	do {
+		cout <<"Do you want to connect with specific spec? (y/n): ";
+		cin >> specific_spec;
+
+		if(cin.fail()) {
+			cout <<endl<<"Error: CIN istream error!"<<endl;
+			exit(-1);
+		}
+  	} while (specific_spec != 'y' && specific_spec != 'n');
+
+	return specific_spec;
+}
+
+int get_ch() {
+	int ch;
+
+	do {
+		cout <<endl<<"Channel [0-4]: ";
+		cin >> ch;
+
+		if(cin.fail()) {
+			cout <<endl<<"Error: CIN istream error!"<<endl;
+			exit(-1);
+		}
+	} while (ch < 0 || ch >= NUMBER_CHS);
+
+	return ch;
+}
+
+long int get_pulse_len() {
+
+	long int len_pulse;
+	
+	do {
+		cout <<endl<<"Pulse width (cycles) [>= 0 && <= 268435455] : ";
+		cin >> len_pulse;
+
+		if(cin.fail()) {
+			cout <<endl<<"Error: CIN istream error!"<<endl;
+			exit(-1);
+		}
+	} while(len_pulse < 0 || len_pulse > MAX_PULSE_LEN);
+
+	return len_pulse;
+}
+
+long get_trig() {
+	long tv_sec;
+
+	cout <<endl<<"Trig time (seconds): ";
+	cin >> tv_sec;
+
+	if(cin.fail()) {
+			cout <<endl<<"Error: CIN istream error!"<<endl;
+			exit(-1);
+	}
+
+	return tv_sec;
+}
+
+char get_mode() {
+	char mode;
+
+	do {
+		cout<<endl<<"Mode (i/I: input/input + R, d/D: output/output + R): ";
+		cin >> mode;
+
+		if(cin.fail()) {
+			cout <<endl<<"Error: CIN istream error!"<<endl;
+			exit(-1);
+		}
+	} while(mode != 'i' && mode != 'I' && mode != 'd' && mode != 'D');
+
+	return mode;
+}
+
+char get_proto() {
+	char proto_c;
+
+	do {
+		cout <<"Proto (t: tcp, u: udp): ";
+		cin >> proto_c;
+		
+		if(cin.fail()) {
+			cout <<endl<<"Error: CIN istream error!"<<endl;
+			exit(-1);
+		}
+
+	} while (proto_c != 't' && proto_c != 'u');
+
+	return proto_c;
+}
+
+char get_vuart_loop_mode() {
+	char loop;
+
+	do {
+		cout << "Loop mode (y/n)?: ";
+		cin >> loop;
+
+		if(cin.fail()) {
+			cout <<endl<<"Error: CIN istream error!"<<endl;
+			exit(-1);
+		}
+	} while(loop != 'y' && loop != 'n');
+
+	return loop;
+}
 
 // Remove additional characters
 string delete_format_chars(string s) {
@@ -75,26 +222,22 @@ int main ()
   timespec t_trig;
   int ch;
   char mode;
-  char specific_dio;
-  bool specific_dio_b = false;
+  char specific_spec;
+  bool specific_spec_b = false;
   string cmd;
   string virtual_cmd;
   string proto("udp");
-  
-  do {
-	cout <<"Do you want to connect with specific spec? (y/n): ";
-	cin >> specific_dio;
-  } while (specific_dio != 'y' && specific_dio != 'n');
-  
-  if(specific_dio == 'y') {
-		specific_dio_b = true;
-		cout << "IP: ";
-		cin >> ip;
+
+  specific_spec = get_specific_spec_mode();
+
+  if(specific_spec == 'y') {
+		specific_spec_b = true;
+		ip = get_ip();
   }
   
   do {
 	  // Spec prompt
-	  if(!specific_dio_b)
+	  if(!specific_spec_b)
 		cout << "command>> ";
 	  else 
 		cout << "spec@"<<ip<<">> ";
@@ -104,11 +247,10 @@ int main ()
 	  
 	  if(cmd == "scan") {
 		  cout <<endl<<"-------------------------------------------"<<endl;
-		  cout <<"SCAN"<<endl<<"-------------------------------------------"<<endl;
+		  //cout <<"SCAN"<<endl<<"-------------------------------------------"<<endl;
 		  
-		  if(!specific_dio_b) {
-			cout <<endl<<"IP: ";
-			cin >> ip;
+		  if(!specific_spec_b) {
+			ip = get_ip();
 	      }
 		  
 		  dio.scan(proto+"/"+ip);
@@ -117,18 +259,15 @@ int main ()
 	  else {
 		  if (cmd == "pulse_imm") {
 			cout <<endl<<"-------------------------------------------"<<endl;
-			cout <<"PULSE_IMM"<<endl<<"-------------------------------------------"<<endl;
+			//cout <<"PULSE_IMM"<<endl<<"-------------------------------------------"<<endl;
 			
-			 if(!specific_dio_b) {
-				cout <<endl<<"IP: ";
-				cin >> ip;
+			 if(!specific_spec_b) {
+				ip = get_ip();
 			}
 			
-			cout <<endl<<"CHANNEL: ";
-			cin >> ch;
-			
-			cout <<endl<<"PULSE WIDTH (cycles): ";
-			cin >> len_pulse;
+			ch = get_ch();
+
+			len_pulse = get_pulse_len();
 			
 			dio.pulseImm(proto+"/"+ip,ch,len_pulse);
 			
@@ -138,21 +277,17 @@ int main ()
 			  if(cmd == "pulse_prog") {
 				  
 				cout <<endl<<"-------------------------------------------"<<endl;
-				cout <<"PULSE_PROG"<<endl<<"-------------------------------------------"<<endl;
+				//cout <<"PULSE_PROG"<<endl<<"-------------------------------------------"<<endl;
 			
-				 if(!specific_dio_b) {
-					cout <<endl<<"IP: ";
-					cin >> ip;
+				 if(!specific_spec_b) {
+					ip = get_ip();
 				}
 			
-				cout <<endl<<"CHANNEL: ";
-				cin >> ch;
+				ch = get_ch();
 			
-				cout <<endl<<"PULSE WIDTH (cycles): ";
-				cin >> len_pulse;
+				len_pulse = get_pulse_len();
 				
-				cout <<endl<<"TRIG TIME (seconds): ";
-				cin >> t_trig.tv_sec;
+				t_trig.tv_sec = get_trig();
 				
 				t_trig.tv_nsec = 0;
 				
@@ -164,18 +299,15 @@ int main ()
 				  if(cmd == "config_ch") {
 					  
 					cout <<endl<<"-------------------------------------------"<<endl;
-					cout <<"CONFIG_CH"<<endl<<"-------------------------------------------"<<endl;
+					//cout <<"CONFIG_CH"<<endl<<"-------------------------------------------"<<endl;
 			
-					 if(!specific_dio_b) {
-						cout <<endl<<"IP: ";
-						cin >> ip;
+					 if(!specific_spec_b) {
+						ip = get_ip();
 					}
 			
-					cout <<endl<<"CHANNEL: ";
-					cin >> ch;
+					ch = get_ch();
 					
-					cout<<endl<<"MODE (i/I: input/input + R, d/D: output/output + R): ";
-					cin >> mode;
+					mode = get_mode();
 					
 					dio.configCh(proto+"/"+ip,ch,mode);
 			
@@ -185,15 +317,13 @@ int main ()
 					  if(cmd == "fifo_val") {
 						  
 						cout <<endl<<"-------------------------------------------"<<endl;
-						cout <<"FIFO_VAL"<<endl<<"-------------------------------------------"<<endl;
+						//cout <<"FIFO_VAL"<<endl<<"-------------------------------------------"<<endl;
 			
-						 if(!specific_dio_b) {
-							cout <<endl<<"IP: ";
-							cin >> ip;
+						 if(!specific_spec_b) {
+							ip = get_ip();
 						}
 			
-						cout <<endl<<"CHANNEL: ";
-						cin >> ch;
+						ch = get_ch();
 						
 						dio.fifoValues(proto+"/"+ip,ch);
 			
@@ -204,11 +334,10 @@ int main ()
 						  if(cmd == "all_fifo_val") {
 							  
 							cout <<endl<<"-------------------------------------------"<<endl;
-							cout <<"ALL_FIFO_VAL"<<endl<<"-------------------------------------------"<<endl;
+							//cout <<"ALL_FIFO_VAL"<<endl<<"-------------------------------------------"<<endl;
 							
-							 if(!specific_dio_b) {
-								cout <<endl<<"IP: ";
-								cin >> ip;
+							 if(!specific_spec_b) {
+								ip = get_ip();
 							}
 							
 							dio.AllFifoValues(proto+"/"+ip);
@@ -219,18 +348,19 @@ int main ()
 							  if(cmd == "fifo_empty") {
 								  
 								cout <<endl<<"-------------------------------------------"<<endl;
-								cout <<"FIFO_EMPTY"<<endl<<"-------------------------------------------"<<endl;
+								//cout <<"FIFO_EMPTY"<<endl<<"-------------------------------------------"<<endl;
 			
-								 if(!specific_dio_b) {
-									cout <<endl<<"IP: ";
-									cin >> ip;
+								 if(!specific_spec_b) {
+									ip = get_ip();
 								}
 			
-								cout <<endl<<"CHANNEL: ";
-								cin >> ch;
+								ch = get_ch();
 								
 								if(dio.isFifoEmpty(proto+"/"+ip,ch)) {
-										cout <<endl<<"FIFO is EMPTY"<<endl;
+										cout <<endl<<"Fifo is empty"<<endl;
+								}
+								else {
+									cout <<endl<<"Fifo is not empty"<<endl;
 								}
 			
 								cout <<endl<<endl<<"-------------------------------------------"<<endl;
@@ -239,18 +369,19 @@ int main ()
 								  if(cmd == "fifo_full") {
 									  
 									cout <<endl<<"-------------------------------------------"<<endl;
-									cout <<"FIFO_FULL"<<endl<<"-------------------------------------------"<<endl;
+									//cout <<"FIFO_FULL"<<endl<<"-------------------------------------------"<<endl;
 			
-									 if(!specific_dio_b) {
-										cout <<endl<<"IP: ";
-										cin >> ip;
+									 if(!specific_spec_b) {
+										ip = get_ip();
 									}
 			
-									cout <<endl<<"CHANNEL: ";
-									cin >> ch;
+									ch = get_ch();
 									
 									if(dio.isFifoFull(proto+"/"+ip,ch)) {
-										cout <<endl<<"FIFO is FULL"<<endl;
+										cout <<endl<<"Fifo is full"<<endl;
+									}
+									else {
+										cout <<endl<<"Fifo is not full"<<endl;
 									}
 			
 									cout <<endl<<endl<<"-------------------------------------------"<<endl;
@@ -259,17 +390,15 @@ int main ()
 									  if(cmd == "fifo_size") {
 										  
 										cout <<endl<<"-------------------------------------------"<<endl;
-										cout <<"FIFO_SIZE"<<endl<<"-------------------------------------------"<<endl;
+										//cout <<"FIFO_SIZE"<<endl<<"-------------------------------------------"<<endl;
 			
-										 if(!specific_dio_b) {
-											cout <<endl<<"IP: ";
-											cin >> ip;
+										 if(!specific_spec_b) {
+											ip = get_ip();
 										}
 			
-										cout <<endl<<"CHANNEL: ";
-										cin >> ch;
+										ch = get_ch();
 										
-										cout <<endl<<"FIFO contains "<<dio.fifoSize(proto+"/"+ip,ch)<<" values"<<endl;
+										cout <<endl<<"Fifo contains "<<dio.fifoSize(proto+"/"+ip,ch)<<" values"<<endl;
 			
 										cout <<endl<<endl<<"-------------------------------------------"<<endl;
 									  }
@@ -280,11 +409,10 @@ int main ()
 											else {
 												if(cmd == "show_config_ch") {
 													cout <<endl<<"-------------------------------------------"<<endl;
-													cout <<"SHOW_CONFIG_CH"<<endl<<"-------------------------------------------"<<endl;
+													//cout <<"SHOW_CONFIG_CH"<<endl<<"-------------------------------------------"<<endl;
 													
-													 if(!specific_dio_b) {
-														cout <<endl<<"IP: ";
-														cin >> ip;
+													 if(!specific_spec_b) {
+														ip = get_ip();
 													}
 													
 													dio.showConfigChs(proto+"/"+ip);
@@ -294,24 +422,20 @@ int main ()
 												else {
 													
 													if(cmd == "connect") {
-														cout <<endl<<"IP: ";
-														cin >> ip;
+														ip = get_ip();
 														
-														specific_dio_b = true;
+														specific_spec_b = true;
 													}
 													
 													else {
 														if(cmd == "disconnect") {
-															specific_dio_b = false;
+															specific_spec_b = false;
 														}
 														else {
 															if(cmd == "proto") {
 																char proto_c;
 																
-																do {
-																	cout <<"PROTO (t: tcp, u: udp): ";
-																	cin >> proto_c;
-																} while (proto_c != 't' && proto_c != 'u');
+																proto_c = get_proto();
 																
 																if(proto_c == 't')
 																	proto = "tcp";
@@ -324,14 +448,12 @@ int main ()
 																	char trash;
 																	char loop;
 																	
-																	cout << "WARNING: Vuart is under testing!!"<<endl;
-																	if(!specific_dio_b) {
-																		cout <<endl<<"IP: ";
-																		cin >> ip;
+																	cout << "Warning: Vuart is under testing!!"<<endl;
+																	if(!specific_spec_b) {
+																		ip = get_ip();
 																	}
 																	
-																	cout << "Loop mode (y/n)?: ";
-																	cin >> loop;
+																	loop = get_vuart_loop_mode();
 																	
 																	if(loop == 'y')
 																		cout << "Note: Execute exit command in order to close loop mode of vuart!!"<<endl;
@@ -349,7 +471,7 @@ int main ()
 																			
 																			if(HIDE_GUI_STAT_CONT == 1) {
 																				if(virtual_cmd == "gui" || virtual_cmd == "stat cont") {
-																					cout << "WARNING: gui and stat cont must not be used in remote mode (changing to stat cmd)!!"<<endl;
+																					cout << "Warning: gui and stat cont must not be used in remote mode (changing to stat cmd)!!"<<endl;
 																					virtual_cmd = "stat";
 																				}
 																			}
@@ -365,27 +487,28 @@ int main ()
 																}
 																else {
 																	if(cmd == "help" || cmd == "?") {
-																		cout<<"COMMANDS: "<<endl<<endl;
-																		cout <<"scan: it gets SDB information about device"<<endl;
-																		cout <<"pulse_imm: it generates one immediate pulse throughtout one DIO channel"<<endl;
-																		cout <<"pulse_prog: it generates one programmable pulse (with trigger timestamp) throughtout one DIO channel"<<endl;
-																		cout <<"config_ch: it configures one DIO channel as Output/Input with/without resistor termination"<<endl;
-																		cout <<"show_config_ch: it shows all DIO channel configuration"<<endl;
-																		cout <<"fifo_val: it shows all timestamps in one DIO channel fifo"<<endl;
-																		cout <<"all_fifo_val: it shows all timestamps in all DIO channel fifos"<<endl;
-																		cout <<"fifo_empty: it checks if one DIO channel fifo is empty"<<endl;
-																		cout <<"fifo_full: it checks if one DIO channel fifo is full"<<endl;
-																		cout <<"fifo_size: it gets how many elements there are in one DIO channel fifo"<<endl;
+																		cout <<endl<<endl<<"-------------------------------------------"<<endl;
+																		cout<<"Available commands: "<<endl<<endl;
+																		cout <<"scan: it gets SDB information about device"<<endl<<endl;
+																		cout <<"pulse_imm: it generates one immediate pulse throughtout one DIO channel"<<endl<<endl;
+																		cout <<"pulse_prog: it generates one programmable pulse (with trigger timestamp) throughtout one DIO channel"<<endl<<endl;
+																		cout <<"config_ch: it configures one DIO channel as Output/Input with/without resistor termination"<<endl<<endl;
+																		cout <<"show_config_ch: it shows all DIO channel configuration"<<endl<<endl;
+																		cout <<"fifo_val: it shows all timestamps in one DIO channel fifo"<<endl<<endl;
+																		cout <<"all_fifo_val: it shows all timestamps in all DIO channel fifos"<<endl<<endl;
+																		cout <<"fifo_empty: it checks if one DIO channel fifo is empty"<<endl<<endl;
+																		cout <<"fifo_full: it checks if one DIO channel fifo is full"<<endl<<endl;
+																		cout <<"fifo_size: it gets how many elements there are in one DIO channel fifo"<<endl<<endl;
 																		cout <<"exit: it closes cmd_spec tool"<<endl;
-																		cout <<"connect: it connects with one device (it avoids another commands asks for your IP address)"<<endl;
-																		cout <<"disconnect: it disconnects of one device (another tools will ask for IP address)"<<endl;
+																		cout <<"connect: it connects with one device (it avoids another commands asks for your IP address)"<<endl<<endl;
+																		cout <<"disconnect: it disconnects of one device (another tools will ask for IP address)"<<endl<<endl;
 																		cout <<"proto: it changes transport protocol (udp/tcp)"<<endl;
-																		cout <<"vuart: it allows to send a vuart command to device"<<endl;
-																		cout <<"help/?: it shows this message"<<endl;
-																		cout<<endl<<endl;
+																		cout <<"vuart: it allows to send a vuart command to device"<<endl<<endl;
+																		cout <<"help/?: it shows this message"<<endl<<endl;
+																		cout <<"-------------------------------------------"<<endl;
 																	}
 																	else {
-																		cout <<endl<<endl<<cmd<<" UNRECOGNIZED COMMAND"<<endl<<endl;
+																		cout <<endl<<endl<<cmd<<": Unrecognized command"<<endl<<endl;
 																	}
 																}
 																
