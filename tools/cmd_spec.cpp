@@ -161,6 +161,9 @@ char get_proto() {
 
 	} while (proto_c != 't' && proto_c != 'u');
 
+	if(proto_c == 't')
+		cout <<endl<<"Note: Be careful! this option could not work with all devices"<<endl;
+
 	return proto_c;
 }
 
@@ -477,10 +480,18 @@ int main ()
 																			}
 																		
 																			vuart.flush(proto+"/"+ip);
-																		
-																			res = vuart.execute_cmd(proto+"/"+ip,virtual_cmd);
+																			
+																			if(virtual_cmd == "gui" || virtual_cmd == "stat") {
+																				res = vuart.execute_cmd(proto+"/"+ip,virtual_cmd,1);
+																				while(!vuart.isReady(proto+"/"+ip)) {}
+																				vuart.write(proto+"/"+ip,27); // Send the Esc char to stop  the gui/stat update
+																			}
+																			else
+																				res = vuart.execute_cmd(proto+"/"+ip,virtual_cmd,3);
+																			
 																	
 																			printf_vuart(res,virtual_cmd);
+
 																		}
 																		
 																	} while(loop == 'y');
@@ -489,22 +500,22 @@ int main ()
 																	if(cmd == "help" || cmd == "?") {
 																		cout <<endl<<endl<<"-------------------------------------------"<<endl;
 																		cout<<"Available commands: "<<endl<<endl;
-																		cout <<"scan: it gets SDB information about device"<<endl<<endl;
-																		cout <<"pulse_imm: it generates one immediate pulse throughtout one DIO channel"<<endl<<endl;
-																		cout <<"pulse_prog: it generates one programmable pulse (with trigger timestamp) throughtout one DIO channel"<<endl<<endl;
-																		cout <<"config_ch: it configures one DIO channel as Output/Input with/without resistor termination"<<endl<<endl;
-																		cout <<"show_config_ch: it shows all DIO channel configuration"<<endl<<endl;
-																		cout <<"fifo_val: it shows all timestamps in one DIO channel fifo"<<endl<<endl;
-																		cout <<"all_fifo_val: it shows all timestamps in all DIO channel fifos"<<endl<<endl;
-																		cout <<"fifo_empty: it checks if one DIO channel fifo is empty"<<endl<<endl;
-																		cout <<"fifo_full: it checks if one DIO channel fifo is full"<<endl<<endl;
-																		cout <<"fifo_size: it gets how many elements there are in one DIO channel fifo"<<endl<<endl;
-																		cout <<"exit: it closes cmd_spec tool"<<endl;
-																		cout <<"connect: it connects with one device (it avoids another commands asks for your IP address)"<<endl<<endl;
-																		cout <<"disconnect: it disconnects of one device (another tools will ask for IP address)"<<endl<<endl;
-																		cout <<"proto: it changes transport protocol (udp/tcp)"<<endl;
-																		cout <<"vuart: it allows to send a vuart command to device"<<endl<<endl;
-																		cout <<"help/?: it shows this message"<<endl<<endl;
+																		cout <<"\t scan: it gets SDB information about device"<<endl<<endl;
+																		cout <<"\t pulse_imm: it generates one immediate pulse throughtout one DIO channel"<<endl<<endl;
+																		cout <<"\t pulse_prog: it generates one programmable pulse (with trigger timestamp) throughtout one DIO channel"<<endl<<endl;
+																		cout <<"\t config_ch: it configures one DIO channel as Output/Input with/without resistor termination"<<endl<<endl;
+																		cout <<"\t show_config_ch: it shows all DIO channel configuration"<<endl<<endl;
+																		cout <<"\t fifo_val: it shows all timestamps in one DIO channel fifo"<<endl<<endl;
+																		cout <<"\t all_fifo_val: it shows all timestamps in all DIO channel fifos"<<endl<<endl;
+																		cout <<"\t fifo_empty: it checks if one DIO channel fifo is empty"<<endl<<endl;
+																		cout <<"\t fifo_full: it checks if one DIO channel fifo is full"<<endl<<endl;
+																		cout <<"\t fifo_size: it gets how many elements there are in one DIO channel fifo"<<endl<<endl;
+																		cout <<"\t exit: it closes cmd_spec tool"<<endl<<endl;
+																		cout <<"\t connect: it connects with one device (it avoids another commands asks for your IP address)"<<endl<<endl;
+																		cout <<"\t disconnect: it disconnects of one device (another tools will ask for IP address)"<<endl<<endl;
+																		cout <<"\t proto: it changes transport protocol (udp/tcp)"<<endl<<endl;
+																		cout <<"\t vuart: it allows to send a vuart command to device"<<endl<<endl;
+																		cout <<"\t help/?: it shows this message"<<endl<<endl;
 																		cout <<"-------------------------------------------"<<endl;
 																	}
 																	else {

@@ -207,7 +207,7 @@ void Vuart::flush(string ip) {
 	}
 }
 
-string Vuart::execute_cmd(string ip, string cmd) {
+string Vuart::execute_cmd(string ip, string cmd, int wait_uart) {
 	char data;
 	bool valid = false;
 	string res;
@@ -228,8 +228,8 @@ string Vuart::execute_cmd(string ip, string cmd) {
 		this->write(ip,0xd);
 		
 	// Wait for a period
-	if(WAIT_VUART > 0)
-		usleep(WAIT_VUART);
+	if(wait_uart > 0)
+		usleep(wait_uart*1000000);
 	
 	// First read character from vuart
 	data = this->read(ip,valid);

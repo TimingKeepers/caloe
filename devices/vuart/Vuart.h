@@ -32,8 +32,6 @@
 #include <iostream>
 #include <unistd.h>
 
-#define WAIT_VUART 1000000 // usecs (1 second)
-
 using namespace std;
 using namespace caloe;
 
@@ -146,12 +144,14 @@ class Vuart {
 		 *   @param ip Etherbone IP Netaddress
 		 * 
 		 *   @param s cmd Command to execute
+		 *
+		 *   @param wait_uart Time in seconds to wait in order to get the vuart output command
 		 * 
 		 *   @return Command results in string variable
 		 * 
 		 **/
 		
-		string execute_cmd(string ip, string cmd);
+		string execute_cmd(string ip, string cmd, int wait_uart);
 		
 		/** @brief Vuart destructor **/
 		
