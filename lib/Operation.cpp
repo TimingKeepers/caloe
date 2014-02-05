@@ -136,9 +136,14 @@ vector<eb_data_t> Operation::execute(ParamOperation & params) {
 
 			// Execute access
 			int ok;
+			int retry = 0;
 			
 			do {
 				ok = it_access->execute();
+				retry++;
+				
+				if(retry > MAX_RETRY)
+					exit(-1);
 			} while(ok != ALL_OK);
 			
 			// If access type is READ, get read value to return it

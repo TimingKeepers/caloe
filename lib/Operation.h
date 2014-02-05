@@ -37,6 +37,8 @@
 using namespace std;
 
 namespace caloe {
+	
+#define MAX_RETRY 10
 
 /** @brief Contains a list of Access **/
 
