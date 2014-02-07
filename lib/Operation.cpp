@@ -142,7 +142,7 @@ vector<eb_data_t> Operation::execute(ParamOperation & params) {
 				ok = it_access->execute();
 				retry++;
 				
-				if(retry > MAX_RETRY)
+				if(MAX_RETRY > 0 && retry > MAX_RETRY)
 					exit(-1);
 			} while(ok != ALL_OK);
 			
