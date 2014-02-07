@@ -482,9 +482,11 @@ int main ()
 																			vuart.flush(proto+"/"+ip);
 																			
 																			if(virtual_cmd == "gui" || virtual_cmd == "stat") {
+																				vuart.execute_cmd(proto+"/"+ip,"refresh 0",1);
 																				res = vuart.execute_cmd(proto+"/"+ip,virtual_cmd,1);
-																				while(!vuart.isReady(proto+"/"+ip)) {}
-																				vuart.write(proto+"/"+ip,27); // Send the Esc char to stop  the gui/stat update
+																				//while(!vuart.isReady(proto+"/"+ip)) {}
+																				//vuart.write(proto+"/"+ip,27); // Send the Esc char to stop  the gui/stat update
+																				vuart.execute_cmd(proto+"/"+ip,"refresh 1",1);
 																			}
 																			else
 																				res = vuart.execute_cmd(proto+"/"+ip,virtual_cmd,3);
