@@ -169,6 +169,7 @@ static void scan_callback_caloe(eb_user_data_t user, eb_device_t dev, const stru
   int norecurse = 0;
   int verbose = 0;
   const union sdb_record* des;
+  int timeout;
 
   br.parent = (struct bus_record*)user;
   br.parent->stop = 1;
@@ -285,12 +286,16 @@ static void scan_callback_caloe(eb_user_data_t user, eb_device_t dev, const stru
       br.addr_last  = des->bridge.sdb_component.addr_last;
 
       eb_sdb_scan_bus(dev, &des->bridge, &br, &scan_callback_caloe);
-      
-      while (!br.stop) {
-		eb_socket_run(eb_device_socket(dev),-1);//TIMEOUT_LIMIT);
-		
-		//if(TIMEOUT_LIMIT != -1) 
-			//break;
+
+      timeout = TIMEOUT_LIMIT;      
+
+      while (timeout > 0) {
+		int telapsed = eb_socket_run(eb_device_socket(dev),timeout);
+
+		if(br.stop)
+			break;
+
+		timeout -= telapsed;
 	  }
 	  
 	  if(!br.stop) {
@@ -461,6 +466,8 @@ int read_caloe(access_caloe * access) {
   eb_cycle_t cycle;
   eb_data_t mask;
   int shift;
+
+  int timeout;
   
   if(access->mode != READ) {
 	  
@@ -701,12 +708,15 @@ int read_caloe(access_caloe * access) {
   eb_cycle_close(cycle);
     
   stop = 0;
+  timeout = TIMEOUT_LIMIT;
   
-  while(!stop) {
-	eb_socket_run(socket, TIMEOUT_LIMIT);
+  while(timeout > 0) {
+	int telapsed = eb_socket_run(socket,timeout);
 	
-	if(TIMEOUT_LIMIT != -1)
+	if(stop)
 		break;
+
+	timeout -= telapsed;
   }
   
   if(!stop) {	
@@ -807,6 +817,8 @@ int write_caloe(access_caloe * access) {
   eb_data_t data = access->value;
   char * netaddress = access->networkc.netaddress;
   int port = (access->networkc.port == NULL ? 60368 : *(access->networkc.port));
+
+  int timeout;
   
   char net[50];
   
@@ -1013,12 +1025,15 @@ int write_caloe(access_caloe * access) {
       eb_cycle_close(cycle);
       
       stop = 0;
+      timeout = TIMEOUT_LIMIT;
       
-      while(!stop) {
-		eb_socket_run(socket, TIMEOUT_LIMIT);
+      while(timeout > 0) {
+		int telapsed = eb_socket_run(socket, TIMEOUT_LIMIT);
 		
-		if(TIMEOUT_LIMIT != -1)
+		if(stop)
 			break;
+
+		timeout -= telapsed;
 	 }
 	  
 
@@ -1062,12 +1077,15 @@ int write_caloe(access_caloe * access) {
   eb_cycle_close(cycle);
   
   stop = 0;
+  timeout = TIMEOUT_LIMIT;
   
-  while(!stop) {
-	eb_socket_run(socket, TIMEOUT_LIMIT);
+  while(timeout > 0) {
+	int telapsed = eb_socket_run(socket,timeout);
 	
-	if(TIMEOUT_LIMIT != -1)
+	if(stop)
 		break;
+
+	timeout -= telapsed;
   }
 
   if(!stop) {	
@@ -1167,6 +1185,8 @@ int scan_caloe(access_caloe * access) {
   char * netaddress = access->networkc.netaddress;
   
   int port = (access->networkc.port == NULL ? 60368 : *(access->networkc.port));
+
+  int timeout;
   
   char net[50];
   
@@ -1200,12 +1220,17 @@ int scan_caloe(access_caloe * access) {
 
   if (!verbose)
     fprintf(stdout, "BusPath        VendorID         Product   BaseAddress(Hex)  Description\n");
-  
-  while (!br.stop) {
-    eb_socket_run(socket,-1);//TIMEOUT_LIMIT);
+
+  br.stop = 0;
+  timeout = TIMEOUT_LIMIT;  
+
+  while (timeout > 0) {
+    int telapsed = eb_socket_run(socket,timeout);
     
-    //if(TIMEOUT_LIMIT != -1)
-	//	break;
+    if(br.stop)
+	break;
+
+    timeout -= telapsed;
   }
 
   if(!br.stop) {	
