@@ -216,196 +216,196 @@ void printf_vuart(string res,string cmd) {
 
 int main ()
 {
-  // Load devices (Dio and Vuart)
-  Dio dio("../devices/dio/dio.cfg");
-  Vuart vuart("../devices/vuart/vuart.cfg");
+	// Load devices (Dio and Vuart)
+	Dio dio("../devices/dio/dio.cfg");
+	Vuart vuart("../devices/vuart/vuart.cfg");
   
-  string ip;
-  long int len_pulse;
-  timespec t_trig;
-  int ch;
-  char mode;
-  char specific_spec;
-  bool specific_spec_b = false;
-  string cmd;
-  string virtual_cmd;
-  string proto("udp");
+	string ip;
+	long int len_pulse;
+	timespec t_trig;
+	int ch;
+	char mode;
+	char specific_spec;
+	bool specific_spec_b = false;
+	string cmd;
+	string virtual_cmd;
+	string proto("udp");
 
-  specific_spec = get_specific_spec_mode();
+	specific_spec = get_specific_spec_mode();
 
-  if(specific_spec == 'y') {
+	if(specific_spec == 'y') {
 		specific_spec_b = true;
 		ip = get_ip();
-  }
+	}
   
-  do {
-	  // Spec prompt
-	  if(!specific_spec_b)
-		cout << "command>> ";
-	  else 
-		cout << "spec@"<<ip<<">> ";
+	do {
+		// Spec prompt
+		if(!specific_spec_b)
+			cout << "command>> ";
+		else 
+			cout << "spec@"<<ip<<">> ";
 		
-	  // Read command from user
-	  cin >> cmd;
+		// Read command from user
+		cin >> cmd;
 	  
-	  if(cmd == "scan") {
-		  cout <<endl<<"-------------------------------------------"<<endl;
-		  //cout <<"SCAN"<<endl<<"-------------------------------------------"<<endl;
-		  
-		  if(!specific_spec_b) {
-			ip = get_ip();
-	      }
-		  
-		  dio.scan(proto+"/"+ip);
-		  cout <<endl<<endl<<"-------------------------------------------"<<endl;
-	  }
-	  else {
-		  if (cmd == "pulse_imm") {
+		if(cmd == "scan") {
 			cout <<endl<<"-------------------------------------------"<<endl;
-			//cout <<"PULSE_IMM"<<endl<<"-------------------------------------------"<<endl;
-			
-			 if(!specific_spec_b) {
+			//cout <<"SCAN"<<endl<<"-------------------------------------------"<<endl;
+		  
+			if(!specific_spec_b) {
 				ip = get_ip();
 			}
-			
-			ch = get_ch();
-
-			len_pulse = get_pulse_len();
-			
-			dio.pulseImm(proto+"/"+ip,ch,len_pulse);
-			
+		  
+			dio.scan(proto+"/"+ip);
 			cout <<endl<<endl<<"-------------------------------------------"<<endl;
-		  }
-		  else {
-			  if(cmd == "pulse_prog") {
-				  
+		}
+		else {
+			if (cmd == "pulse_imm") {
 				cout <<endl<<"-------------------------------------------"<<endl;
-				//cout <<"PULSE_PROG"<<endl<<"-------------------------------------------"<<endl;
+				//cout <<"PULSE_IMM"<<endl<<"-------------------------------------------"<<endl;
 			
-				 if(!specific_spec_b) {
+				if(!specific_spec_b) {
 					ip = get_ip();
 				}
 			
 				ch = get_ch();
-			
+
 				len_pulse = get_pulse_len();
-				
-				t_trig.tv_sec = get_trig();
-				
-				t_trig.tv_nsec = 0;
-				
-				dio.pulseProg(proto+"/"+ip,ch,len_pulse,t_trig);
+			
+				dio.pulseImm(proto+"/"+ip,ch,len_pulse);
 			
 				cout <<endl<<endl<<"-------------------------------------------"<<endl;
-			  }
-			  else {
-				  if(cmd == "config_ch") {
-					  
+			}
+			else {
+				if(cmd == "pulse_prog") {
+				  
 					cout <<endl<<"-------------------------------------------"<<endl;
-					//cout <<"CONFIG_CH"<<endl<<"-------------------------------------------"<<endl;
+					//cout <<"PULSE_PROG"<<endl<<"-------------------------------------------"<<endl;
 			
-					 if(!specific_spec_b) {
+					if(!specific_spec_b) {
 						ip = get_ip();
 					}
 			
 					ch = get_ch();
-					
-					mode = get_mode();
-					
-					dio.configCh(proto+"/"+ip,ch,mode);
+			
+					len_pulse = get_pulse_len();
+				
+					t_trig.tv_sec = get_trig();
+				
+					t_trig.tv_nsec = 0;
+				
+					dio.pulseProg(proto+"/"+ip,ch,len_pulse,t_trig);
 			
 					cout <<endl<<endl<<"-------------------------------------------"<<endl;
-				  }
-				  else {
-					  if(cmd == "fifo_val") {
-						  
+				}
+				else {
+					if(cmd == "config_ch") {
+					  
 						cout <<endl<<"-------------------------------------------"<<endl;
-						//cout <<"FIFO_VAL"<<endl<<"-------------------------------------------"<<endl;
+						//cout <<"CONFIG_CH"<<endl<<"-------------------------------------------"<<endl;
 			
-						 if(!specific_spec_b) {
+						if(!specific_spec_b) {
 							ip = get_ip();
 						}
 			
 						ch = get_ch();
-						
-						dio.fifoValues(proto+"/"+ip,ch);
+					
+						mode = get_mode();
+					
+						dio.configCh(proto+"/"+ip,ch,mode);
 			
 						cout <<endl<<endl<<"-------------------------------------------"<<endl;
+					}
+					else {
+						if(cmd == "fifo_val") {
 						  
-					  }
-					  else {
-						  if(cmd == "all_fifo_val") {
-							  
 							cout <<endl<<"-------------------------------------------"<<endl;
-							//cout <<"ALL_FIFO_VAL"<<endl<<"-------------------------------------------"<<endl;
-							
-							 if(!specific_spec_b) {
+							//cout <<"FIFO_VAL"<<endl<<"-------------------------------------------"<<endl;
+			
+							if(!specific_spec_b) {
 								ip = get_ip();
 							}
-							
-							dio.AllFifoValues(proto+"/"+ip);
+			
+							ch = get_ch();
+						
+							dio.fifoValues(proto+"/"+ip,ch);
 			
 							cout <<endl<<endl<<"-------------------------------------------"<<endl;
-						  }
-						  else {
-							  if(cmd == "fifo_empty") {
-								  
+						  
+						}
+						else {
+							if(cmd == "all_fifo_val") {
+							  
 								cout <<endl<<"-------------------------------------------"<<endl;
-								//cout <<"FIFO_EMPTY"<<endl<<"-------------------------------------------"<<endl;
-			
-								 if(!specific_spec_b) {
+								//cout <<"ALL_FIFO_VAL"<<endl<<"-------------------------------------------"<<endl;
+							
+								if(!specific_spec_b) {
 									ip = get_ip();
 								}
-			
-								ch = get_ch();
-								
-								if(dio.isFifoEmpty(proto+"/"+ip,ch)) {
-										cout <<endl<<"Fifo is empty"<<endl;
-								}
-								else {
-									cout <<endl<<"Fifo is not empty"<<endl;
-								}
+							
+								dio.AllFifoValues(proto+"/"+ip);
 			
 								cout <<endl<<endl<<"-------------------------------------------"<<endl;
-							  }
-							  else {
-								  if(cmd == "fifo_full") {
-									  
+							}
+							else {
+								if(cmd == "fifo_empty") {
+								  
 									cout <<endl<<"-------------------------------------------"<<endl;
-									//cout <<"FIFO_FULL"<<endl<<"-------------------------------------------"<<endl;
+									//cout <<"FIFO_EMPTY"<<endl<<"-------------------------------------------"<<endl;
 			
-									 if(!specific_spec_b) {
+									if(!specific_spec_b) {
 										ip = get_ip();
 									}
 			
 									ch = get_ch();
-									
-									if(dio.isFifoFull(proto+"/"+ip,ch)) {
-										cout <<endl<<"Fifo is full"<<endl;
+								
+									if(dio.isFifoEmpty(proto+"/"+ip,ch)) {
+										cout <<endl<<"Fifo is empty"<<endl;
 									}
 									else {
-										cout <<endl<<"Fifo is not full"<<endl;
+										cout <<endl<<"Fifo is not empty"<<endl;
 									}
 			
 									cout <<endl<<endl<<"-------------------------------------------"<<endl;
-								  }
-								  else {
-									  if(cmd == "fifo_size") {
-										  
+								}
+								else {
+									if(cmd == "fifo_full") {
+									  
 										cout <<endl<<"-------------------------------------------"<<endl;
-										//cout <<"FIFO_SIZE"<<endl<<"-------------------------------------------"<<endl;
+										//cout <<"FIFO_FULL"<<endl<<"-------------------------------------------"<<endl;
 			
-										 if(!specific_spec_b) {
+										if(!specific_spec_b) {
 											ip = get_ip();
 										}
 			
 										ch = get_ch();
-										
-										cout <<endl<<"Fifo contains "<<dio.fifoSize(proto+"/"+ip,ch)<<" values"<<endl;
+									
+										if(dio.isFifoFull(proto+"/"+ip,ch)) {
+											cout <<endl<<"Fifo is full"<<endl;
+										}
+										else {
+											cout <<endl<<"Fifo is not full"<<endl;
+										}
 			
 										cout <<endl<<endl<<"-------------------------------------------"<<endl;
-									  }
-									  else {
+									}
+									else {
+										if(cmd == "fifo_size") {
+										  
+											cout <<endl<<"-------------------------------------------"<<endl;
+											//cout <<"FIFO_SIZE"<<endl<<"-------------------------------------------"<<endl;
+			
+											if(!specific_spec_b) {
+												ip = get_ip();
+											}
+			
+											ch = get_ch();
+										
+											cout <<endl<<"Fifo contains "<<dio.fifoSize(proto+"/"+ip,ch)<<" values"<<endl;
+			
+											cout <<endl<<endl<<"-------------------------------------------"<<endl;
+										}
+										else {
 										  
 											if(cmd == "exit") {}
 											
@@ -414,7 +414,7 @@ int main ()
 													cout <<endl<<"-------------------------------------------"<<endl;
 													//cout <<"SHOW_CONFIG_CH"<<endl<<"-------------------------------------------"<<endl;
 													
-													 if(!specific_spec_b) {
+													if(!specific_spec_b) {
 														ip = get_ip();
 													}
 													
@@ -523,14 +523,12 @@ int main ()
 																	else {
 																		cout <<endl<<endl<<cmd<<": Unrecognized command"<<endl<<endl;
 																	}
-																}
-																
+																}	
 															}
 														}
 													}
-													
-													}
 												}
+											}
 										}
 									}
 								}
@@ -539,9 +537,8 @@ int main ()
 					}
 				}
 			}
-		}
-	  
-  } while(cmd != "exit");
+		}  
+	} while(cmd != "exit");
   
-  return 0;
+	return 0;
 }

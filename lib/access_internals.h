@@ -142,10 +142,10 @@ typedef struct access_caloe {
 */
 
 struct bus_record {
-  int i;
-  int stop;
-  eb_address_t addr_first, addr_last;
-  struct bus_record* parent;
+	int i;
+	int stop;
+	eb_address_t addr_first, addr_last;
+	struct bus_record* parent;
 };
 
 #ifdef __cplusplus 

@@ -37,7 +37,7 @@
 
 static void read_callback_caloe(eb_user_data_t user, eb_device_t dev, eb_operation_t op, eb_status_t status) {
 	int* stop = (int*)user;
-  	*stop = 1;
+	*stop = 1;
 
 	if (status != EB_OK) {
 		
@@ -48,19 +48,20 @@ static void read_callback_caloe(eb_user_data_t user, eb_device_t dev, eb_operati
 		//exit(1);
 	}
 	else {
-    		data = 0;
-    		for (; op != EB_NULL; op = eb_operation_next(op)) {
-      			data <<= (eb_operation_format(op) & EB_DATAX) * 8;
-      			data |= eb_operation_data(op);
+			data = 0;
+			for (; op != EB_NULL; op = eb_operation_next(op)) {
+				data <<= (eb_operation_format(op) & EB_DATAX) * 8;
+				data |= eb_operation_data(op);
 
-      			if (eb_operation_had_error(op)) {
+				if (eb_operation_had_error(op)) {
         			
-        			if(VERBOSE_CALOE) 
+					if(VERBOSE_CALOE) 
 						fprintf(stderr, "ERROR: Segmentation fault reading %s %s bits from address 0x%"EB_ADDR_FMT"\n",eb_width_data(eb_operation_format(op)),
-                        eb_format_endian(eb_operation_format(op)), eb_operation_address(op));
+					
+					eb_format_endian(eb_operation_format(op)), eb_operation_address(op));
 				}
-    		}
-  	}
+			}
+	}
 
 }
 
@@ -73,46 +74,47 @@ static void read_callback_caloe(eb_user_data_t user, eb_device_t dev, eb_operati
 // Please, see http://www.ohwr.org/projects/etherbone-core if you want to get more information
 
 static void write_callback_caloe(eb_user_data_t user, eb_device_t dev, eb_operation_t op, eb_status_t status) {
-  int* stop = (int*)user;
-  *stop = 1;
+	int* stop = (int*)user;
+	*stop = 1;
 
-  if (status != EB_OK) {
-			if(VERBOSE_CALOE) 
-				fprintf(stderr, "ERROR: Etherbone cycle failed! \n");
-    		return;
+	if (status != EB_OK) {
+		if(VERBOSE_CALOE) 
+			fprintf(stderr, "ERROR: Etherbone cycle failed! \n");
+
+		return;
     		
 		//exit(1);
-   }
-   else {
-	data = 0;
-	for (; op != EB_NULL; op = eb_operation_next(op)) {
-
-	if (eb_operation_had_error(op)) {
-		
-		if(VERBOSE_CALOE) 
-			fprintf(stderr, "ERROR: wishbone segfault %s %s %s bits to address 0x%"EB_ADDR_FMT"\n",
-				eb_operation_is_read(op)?"reading":"writing",
-                eb_width_data(eb_operation_format(op)),
-                eb_format_endian(eb_operation_format(op)),
-                eb_operation_address(op));
 	}
+	else {
+		data = 0;
+		for (; op != EB_NULL; op = eb_operation_next(op)) {
 
-  	}
-   }
+			if (eb_operation_had_error(op)) {
+		
+				if(VERBOSE_CALOE) 
+					fprintf(stderr, "ERROR: wishbone segfault %s %s %s bits to address 0x%"EB_ADDR_FMT"\n",
+						eb_operation_is_read(op)?"reading":"writing",
+						eb_width_data(eb_operation_format(op)),
+						eb_format_endian(eb_operation_format(op)),
+						eb_operation_address(op));
+			}
+
+		}
+	}
 }
 
 
 /// This struct has got from Etherbone repository. You can get more information in http://www.ohwr.org/projects/etherbone-core.
 
 static int print_id(struct bus_record* br) {
-  if (br->i == -1) {
-    return fprintf(stdout, "root");
-  } else if (br->parent->i == -1) {
-    return fprintf(stdout, "%d", br->i + 1);
-  } else {
-    int more = print_id(br->parent);
-    return more + fprintf(stdout, ".%d", br->i + 1);
-  }
+	if (br->i == -1) {
+		return fprintf(stdout, "root");
+	} else if (br->parent->i == -1) {
+		return fprintf(stdout, "%d", br->i + 1);
+	} else {
+		int more = print_id(br->parent);
+		return more + fprintf(stdout, ".%d", br->i + 1);
+	}
 }
 
 /// This function is based on Etherbone tools (eb-ls). You can get more information in http://www.ohwr.org/projects/etherbone-core.
@@ -121,12 +123,12 @@ static int print_id(struct bus_record* br) {
 // Please, see http://www.ohwr.org/projects/etherbone-core if you want to get more information
 
 static void verbose_product(const struct sdb_product* product) {
-  fprintf(stdout, "  product.vendor_id:        %016"PRIx64"\n", product->vendor_id);
-  fprintf(stdout, "  product.device_id:        %08"PRIx32"\n",  product->device_id);
-  fprintf(stdout, "  product.version:          %08"PRIx32"\n",  product->version);
-  fprintf(stdout, "  product.date:             %08"PRIx32"\n",  product->date);
-  fprintf(stdout, "  product.name:             "); fwrite(&product->name[0], 1, sizeof(product->name), stdout); fprintf(stdout, "\n");
-  fprintf(stdout, "\n");
+	fprintf(stdout, "  product.vendor_id:        %016"PRIx64"\n", product->vendor_id);
+	fprintf(stdout, "  product.device_id:        %08"PRIx32"\n",  product->device_id);
+	fprintf(stdout, "  product.version:          %08"PRIx32"\n",  product->version);
+	fprintf(stdout, "  product.date:             %08"PRIx32"\n",  product->date);
+	fprintf(stdout, "  product.name:             "); fwrite(&product->name[0], 1, sizeof(product->name), stdout); fprintf(stdout, "\n");
+	fprintf(stdout, "\n");
 }
 
 /// This function is based on Etherbone tools (eb-ls). You can get more information in http://www.ohwr.org/projects/etherbone-core.
@@ -135,23 +137,24 @@ static void verbose_product(const struct sdb_product* product) {
 // Please, see http://www.ohwr.org/projects/etherbone-core if you want to get more information
 
 static void verbose_component(const struct sdb_component* component, struct bus_record* br) {
-  fprintf(stdout, "  sdb_component.addr_first: %016"PRIx64, component->addr_first);
-  if (component->addr_first < br->parent->addr_first || component->addr_first > br->parent->addr_last) {
-    fprintf(stdout, " !!! out of range\n");
-  } else {
-    fprintf(stdout, "\n");
-  }
+	fprintf(stdout, "  sdb_component.addr_first: %016"PRIx64, component->addr_first);
+	if (component->addr_first < br->parent->addr_first || component->addr_first > br->parent->addr_last) {
+		fprintf(stdout, " !!! out of range\n");
+	} else {
+		fprintf(stdout, "\n");
+	}
 
-  fprintf(stdout, "  sdb_component.addr_last:  %016"PRIx64, component->addr_last);
-  if (component->addr_last < br->parent->addr_first || component->addr_last > br->parent->addr_last) {
-    fprintf(stdout, " !!! out of range\n");
-  } else if (component->addr_last < component->addr_first) {
-    fprintf(stdout, " !!! precedes addr_first\n");
-  } else {
-    fprintf(stdout, "\n");
-  }
+	fprintf(stdout, "  sdb_component.addr_last:  %016"PRIx64, component->addr_last);
 
-  verbose_product(&component->product);
+	if (component->addr_last < br->parent->addr_first || component->addr_last > br->parent->addr_last) {
+		fprintf(stdout, " !!! out of range\n");
+	} else if (component->addr_last < component->addr_first) {
+		fprintf(stdout, " !!! precedes addr_first\n");
+	} else {
+		fprintf(stdout, "\n");
+	}
+
+	verbose_product(&component->product);
 }
 
 /**
@@ -163,148 +166,146 @@ static void verbose_component(const struct sdb_component* component, struct bus_
 // Please, see http://www.ohwr.org/projects/etherbone-core if you want to get more information
 
 static void scan_callback_caloe(eb_user_data_t user, eb_device_t dev, const struct sdb_table* sdb, eb_status_t status) {
-  struct bus_record br;
-  int devices;
-  int bad,wide;
-  int norecurse = 0;
-  int verbose = 0;
-  const union sdb_record* des;
-  int timeout;
+	struct bus_record br;
+	int devices;
+	int bad,wide;
+	int norecurse = 0;
+	int verbose = 0;
+	const union sdb_record* des;
+	int timeout;
 
-  br.parent = (struct bus_record*)user;
-  br.parent->stop = 1;
+	br.parent = (struct bus_record*)user;
+	br.parent->stop = 1;
 
-  if (status != EB_OK) {
+	if (status != EB_OK) {
 	
-	if(VERBOSE_CALOE)
-		fprintf(stderr, "ERROR: failed to retrieve SDB: %s\n", eb_status(status));
+		if(VERBOSE_CALOE)
+			fprintf(stderr, "ERROR: failed to retrieve SDB: %s\n", eb_status(status));
     
-    return;
-    //exit(1);
-  }
+		return;
+		//exit(1);
+	}
 
-  if (verbose) {
-    fprintf(stdout, "SDB Bus "); print_id(br.parent); fprintf(stdout, "\n");
-    fprintf(stdout, "  sdb_magic:                %08"PRIx32"\n", sdb->interconnect.sdb_magic);
-    fprintf(stdout, "  sdb_records:              %d\n",   sdb->interconnect.sdb_records);
-    fprintf(stdout, "  sdb_version:              %d\n",   sdb->interconnect.sdb_version);
-    verbose_component(&sdb->interconnect.sdb_component, &br);
+	if (verbose) {
+		fprintf(stdout, "SDB Bus "); print_id(br.parent); fprintf(stdout, "\n");
+		fprintf(stdout, "  sdb_magic:                %08"PRIx32"\n", sdb->interconnect.sdb_magic);
+		fprintf(stdout, "  sdb_records:              %d\n",   sdb->interconnect.sdb_records);
+		fprintf(stdout, "  sdb_version:              %d\n",   sdb->interconnect.sdb_version);
+		verbose_component(&sdb->interconnect.sdb_component, &br);
 
-    if (sdb->interconnect.sdb_component.addr_first > br.parent->addr_first)
-      br.parent->addr_first = sdb->interconnect.sdb_component.addr_first;
-    if (sdb->interconnect.sdb_component.addr_last < br.parent->addr_last)
-      br.parent->addr_last   = sdb->interconnect.sdb_component.addr_last;
-  }
+		if (sdb->interconnect.sdb_component.addr_first > br.parent->addr_first)
+			br.parent->addr_first = sdb->interconnect.sdb_component.addr_first;
+		if (sdb->interconnect.sdb_component.addr_last < br.parent->addr_last)
+			br.parent->addr_last   = sdb->interconnect.sdb_component.addr_last;
+	}
 
-  devices = sdb->interconnect.sdb_records - 1;
-  for (br.i = 0; br.i < devices; ++br.i) {
-    int bad, wide;
-    const union sdb_record* des;
+	devices = sdb->interconnect.sdb_records - 1;
+	for (br.i = 0; br.i < devices; ++br.i) {
+		int bad, wide;
+		const union sdb_record* des;
 
-    des = &sdb->record[br.i];
-    bad = 0;
+		des = &sdb->record[br.i];
+		bad = 0;
 
-    if (verbose) {
-      fprintf(stdout, "Device ");
-      print_id(&br);
+		if (verbose) {
+			fprintf(stdout, "Device ");
+			print_id(&br);
 
-      switch (des->empty.record_type) {
-      case sdb_record_device:
-        fprintf(stdout, "\n");
+			switch (des->empty.record_type) {
+				case sdb_record_device:
+					fprintf(stdout, "\n");
+					fprintf(stdout, "  abi_class:                %04"PRIx16"\n",  des->device.abi_class);
+					fprintf(stdout, "  abi_ver_major:            %d\n",           des->device.abi_ver_major);
+					fprintf(stdout, "  abi_ver_minor:            %d\n",           des->device.abi_ver_minor);
+					fprintf(stdout, "  wbd_endian:               %s\n",           (des->device.bus_specific & SDB_WISHBONE_LITTLE_ENDIAN) ? "little" : "big");
+					fprintf(stdout, "  wbd_width:                %"PRIx8"\n",   des->device.bus_specific & SDB_WISHBONE_WIDTH);
 
-        fprintf(stdout, "  abi_class:                %04"PRIx16"\n",  des->device.abi_class);
-        fprintf(stdout, "  abi_ver_major:            %d\n",           des->device.abi_ver_major);
-        fprintf(stdout, "  abi_ver_minor:            %d\n",           des->device.abi_ver_minor);
-        fprintf(stdout, "  wbd_endian:               %s\n",           (des->device.bus_specific & SDB_WISHBONE_LITTLE_ENDIAN) ? "little" : "big");
-        fprintf(stdout, "  wbd_width:                %"PRIx8"\n",   des->device.bus_specific & SDB_WISHBONE_WIDTH);
+					verbose_component(&des->device.sdb_component, &br);
+					bad = 0;
+				break;
 
-        verbose_component(&des->device.sdb_component, &br);
-        bad = 0;
-        break;
+				case sdb_record_bridge:
+					fprintf(stdout, "\n");
+					fprintf(stdout, "  sdb_child:                %016"PRIx64, des->bridge.sdb_child);
+					if (des->bridge.sdb_child < des->bridge.sdb_component.addr_first || des->bridge.sdb_child > des->bridge.sdb_component.addr_last-64) {
+						fprintf(stdout, " !!! not contained in wbd_{addr_first,addr_last}\n");
+					} else {
+						fprintf(stdout, "\n");
+					}
 
-      case sdb_record_bridge:
-        fprintf(stdout, "\n");
+					verbose_component(&des->bridge.sdb_component, &br);
+					bad = des->bridge.sdb_component.addr_first < br.parent->addr_first ||
+					des->bridge.sdb_component.addr_last  > br.parent->addr_last   ||
+					des->bridge.sdb_component.addr_first > des->bridge.sdb_component.addr_last ||
+					des->bridge.sdb_child                < des->bridge.sdb_component.addr_first ||
+					des->bridge.sdb_child                > des->bridge.sdb_component.addr_last-64;
 
-        fprintf(stdout, "  sdb_child:                %016"PRIx64, des->bridge.sdb_child);
-        if (des->bridge.sdb_child < des->bridge.sdb_component.addr_first || des->bridge.sdb_child > des->bridge.sdb_component.addr_last-64) {
-          fprintf(stdout, " !!! not contained in wbd_{addr_first,addr_last}\n");
-        } else {
-          fprintf(stdout, "\n");
-        }
+				break;
 
-        verbose_component(&des->bridge.sdb_component, &br);
-        bad = des->bridge.sdb_component.addr_first < br.parent->addr_first ||
-              des->bridge.sdb_component.addr_last  > br.parent->addr_last   ||
-              des->bridge.sdb_component.addr_first > des->bridge.sdb_component.addr_last ||
-              des->bridge.sdb_child                < des->bridge.sdb_component.addr_first ||
-              des->bridge.sdb_child                > des->bridge.sdb_component.addr_last-64;
+				case sdb_record_integration: /* !!! fixme */
+				case sdb_record_empty:
+				default:
+					fprintf(stdout, " not present (%x)\n", des->empty.record_type);
+				break;
+			}
 
-        break;
+		} else {
+			wide = print_id(&br);
+			if (wide < 15)
+				fwrite("                     ", 1, 15-wide, stdout); /* align the text */
 
-      case sdb_record_integration: /* !!! fixme */
-      case sdb_record_empty:
-      default:
-        fprintf(stdout, " not present (%x)\n", des->empty.record_type);
-        break;
-      }
+			switch (des->empty.record_type) {
+				case sdb_record_bridge:
+					fprintf(stdout, "%016"PRIx64":%08"PRIx32"  %16"EB_ADDR_FMT"  ",
+						des->device.sdb_component.product.vendor_id,
+						des->device.sdb_component.product.device_id,
+						(eb_address_t)des->device.sdb_component.addr_first);
+					fwrite(des->device.sdb_component.product.name, 1, sizeof(des->device.sdb_component.product.name), stdout);
+					fprintf(stdout, "\n");
+				break;
 
-    } else {
-      wide = print_id(&br);
-      if (wide < 15)
-        fwrite("                     ", 1, 15-wide, stdout); /* align the text */
+				case sdb_record_device:
+					fprintf(stdout, "%016"PRIx64":%08"PRIx32"  %16"EB_ADDR_FMT"  ",
+						des->device.sdb_component.product.vendor_id,
+						des->device.sdb_component.product.device_id,
+						(eb_address_t)des->device.sdb_component.addr_first);
+					fwrite(des->device.sdb_component.product.name, 1, sizeof(des->device.sdb_component.product.name), stdout);
+					fprintf(stdout, "\n");
+				break;
 
-      switch (des->empty.record_type) {
-      case sdb_record_bridge:
-        fprintf(stdout, "%016"PRIx64":%08"PRIx32"  %16"EB_ADDR_FMT"  ",
-                des->device.sdb_component.product.vendor_id,
-                des->device.sdb_component.product.device_id,
-                (eb_address_t)des->device.sdb_component.addr_first);
-        fwrite(des->device.sdb_component.product.name, 1, sizeof(des->device.sdb_component.product.name), stdout);
-        fprintf(stdout, "\n");
-        break;
+				case sdb_record_integration: /* !!! fixme */
+				case sdb_record_empty:
+				default:
+					fprintf(stdout, "---\n");
+				break;
+			}
+		}
 
-      case sdb_record_device:
-        fprintf(stdout, "%016"PRIx64":%08"PRIx32"  %16"EB_ADDR_FMT"  ",
-                des->device.sdb_component.product.vendor_id,
-                des->device.sdb_component.product.device_id,
-                (eb_address_t)des->device.sdb_component.addr_first);
-        fwrite(des->device.sdb_component.product.name, 1, sizeof(des->device.sdb_component.product.name), stdout);
-        fprintf(stdout, "\n");
-        break;
+		if (!norecurse && !bad && des->empty.record_type == sdb_record_bridge) {
+			br.stop = 0;
+			br.addr_first = des->bridge.sdb_component.addr_first;
+			br.addr_last  = des->bridge.sdb_component.addr_last;
 
-      case sdb_record_integration: /* !!! fixme */
-      case sdb_record_empty:
-      default:
-        fprintf(stdout, "---\n");
-        break;
-      }
-    }
+			eb_sdb_scan_bus(dev, &des->bridge, &br, &scan_callback_caloe);
 
-    if (!norecurse && !bad && des->empty.record_type == sdb_record_bridge) {
-      br.stop = 0;
-      br.addr_first = des->bridge.sdb_component.addr_first;
-      br.addr_last  = des->bridge.sdb_component.addr_last;
+			timeout = TIMEOUT_LIMIT;      
 
-      eb_sdb_scan_bus(dev, &des->bridge, &br, &scan_callback_caloe);
+			while (timeout > 0) {
+				int telapsed = eb_socket_run(eb_device_socket(dev),timeout);
 
-      timeout = TIMEOUT_LIMIT;      
+				if(br.stop)
+					break;
 
-      while (timeout > 0) {
-		int telapsed = eb_socket_run(eb_device_socket(dev),timeout);
-
-		if(br.stop)
-			break;
-
-		timeout -= telapsed;
-	  }
+				timeout -= telapsed;
+			}
 	  
-	  if(!br.stop) {
-		if(VERBOSE_CALOE)	
-			fprintf(stderr, "ERROR: Timeout expired! \n");
-	  }
-    }
-  }
-  }
+			if(!br.stop) {
+				if(VERBOSE_CALOE)	
+					fprintf(stderr, "ERROR: Timeout expired! \n");
+			}
+		}
+	}
+}
 
 void build_network_con_caloe(char * ipname_server, network_connection *nc) {
 	nc->netaddress = malloc(sizeof(char)*strlen(ipname_server));
@@ -450,322 +451,321 @@ void print_access_caloe(access_caloe * access) {
 // Please, see http://www.ohwr.org/projects/etherbone-core if you want to get more information
 
 int read_caloe(access_caloe * access) {
-  int stop;
+	int stop;
   
-  eb_width_t address_width, data_width;
-  eb_format_t endian;
+	eb_width_t address_width, data_width;
+	eb_format_t endian;
   
-  eb_socket_t socket;
-  eb_status_t status;
-  eb_device_t device;
-  eb_width_t line_width;
-  eb_format_t line_widths;
-  eb_format_t device_support;
-  eb_format_t read_sizes;
-  eb_format_t format;
-  eb_cycle_t cycle;
-  eb_data_t mask;
-  int shift;
+	eb_socket_t socket;
+	eb_status_t status;
+	eb_device_t device;
+	eb_width_t line_width;
+	eb_format_t line_widths;
+	eb_format_t device_support;
+	eb_format_t read_sizes;
+	eb_format_t format;
+	eb_cycle_t cycle;
+	eb_data_t mask;
+	int shift;
 
-  int timeout;
+	int timeout;
   
-  if(access->mode != READ) {
+	if(access->mode != READ) {
 	  
-	  if(VERBOSE_CALOE)
-		fprintf(stderr,"ERROR: Invalid read operation \n");
-      
-      return INVALID_OPERATION;
-  }
-  
-  eb_format_t size;
-  int attempts, probe, config;
-
-  address_width = EB_ADDRX;
-  data_width = EB_DATAX;
-  size = EB_DATAX;
-  endian = 0; /* auto-detect */
-  attempts = 3;
-  probe = 1;
-  config = access->is_config;
-  eb_address_t address = access->address + access->offset;
-
-  char * netaddress = (access->networkc).netaddress;
-  int port = ((access->networkc).port == NULL ? 60368 : *((access->networkc).port));
-  
-  char net[50];
-  
-  sprintf(net,"%s/%d",netaddress,port);
-
-  switch(access->align) {
-	case SIZE_1B: size = 1;
-	break;
-
-	case SIZE_2B: size = 2;
-	break;
-
-	case SIZE_4B: size = 4;
-	break;
-
-	case SIZE_8B: size = 8;
-	break;
-  }
-  
-  /* How big can the data be? */
-  mask = ~(eb_data_t)0;
-  mask >>= (sizeof(eb_data_t)-size)*8;
-
-  if ((status = eb_socket_open(EB_ABI_CODE, 0, address_width|data_width, &socket)) != EB_OK) {
-	
-	if(VERBOSE_CALOE)
-		fprintf(stderr, "ERROR %d: Could not connect Etherbone socket \n",(int) status);
-    
-    return ERROR_OPEN_SOCKET;
-  }
-  
-  if ((status = eb_device_open(socket, net, EB_ADDRX|EB_DATAX, attempts, &device)) != EB_OK) {
-	  
-	if(VERBOSE_CALOE)
-		fprintf(stderr, "ERROR %d: Could not connect Etherbone device \n", (int) status);
-    
-    return ERROR_OPEN_DEVICE;
-  }
-  
-  line_width = eb_device_width(device);
- 
-  if (probe) {
-   
-    struct sdb_device info;
-    if ((status = eb_sdb_find_by_address(device, address, &info)) != EB_OK) {
-		
-	  if(VERBOSE_CALOE)
-		fprintf(stderr, "ERROR %d: SDB scan failed! \n",(int) status);
-      
-      return ERROR_SDB_SCAN;
-    }
-    
-    if ((info.bus_specific & SDB_WISHBONE_LITTLE_ENDIAN) != 0)
-      device_support = EB_LITTLE_ENDIAN;
-    else
-      device_support = EB_BIG_ENDIAN;
-    device_support |= info.bus_specific & EB_DATAX;
-  } else {
-    device_support = endian | EB_DATAX;
-  }
-  
-  if (endian == 0) {
-    /* Select the probed endian. May still be 0 if device not found. */
-    endian = device_support & EB_ENDIAN_MASK;
-  }
-  
-  /* Final operation endian has been chosen. If 0 the access had better be a full data width access! */
-  format = endian;
-  
-  /* We need to pick the operation width we use.
-   * It must be supported both by the device and the line.
-   */
-  line_widths = ((line_width & EB_DATAX) << 1) - 1; /* Link can support any access smaller than line_width */
-  read_sizes = line_widths & device_support;
-    
-  /* We cannot work with a device that requires larger access than we support */
-  if (read_sizes == 0) {
-	  
-	if(VERBOSE_CALOE)
-		fprintf(stderr, "ERROR: Device could not access with size requested \n");
-    
-    return ERROR_SIZE_NOT_SUPPORTED;
-  }
-  
-  /* Begin the cycle */
-  if ((status = eb_cycle_open(device, &stop, &read_callback_caloe, &cycle)) != EB_OK) {
-	  
-	if(VERBOSE_CALOE)
-		fprintf(stderr, "ERROR %d: Could not create a new Etherbone operation cycle \n",(int) status);
-    
-    return ERROR_OPEN_CYCLE;
-  }
-  
-  /* Can the operation be performed with fidelity? */
-  if ((size & read_sizes) == 0) {
-    eb_format_t fragment_sizes;
-    eb_format_t fragment_size;
-    eb_format_t complete_size;
-   
-    /* What will we do? Prefer to fragment if possible; reading is evil. */
-    
-    /* Fragmented reading is possible if there is a bit in read_sizes smaller than a bit in size */
-    fragment_sizes = size;
-    fragment_sizes |= fragment_sizes >> 1;
-    fragment_sizes |= fragment_sizes >> 2; /* Filled in all sizes under max */
-    if ((fragment_sizes & read_sizes) != 0) {
-      int stride, chunk, count;
-      
-      /* We can do a fragmented read. Pick largest read possible. */
-      complete_size = fragment_sizes ^ (fragment_sizes >> 1); /* This many bytes to read */
-      /* (the above code sets complete_size = size, but works also if size were a mask) */
-      
-      /* Filter out only those which have a good read size */
-      fragment_sizes &= read_sizes;
-      /* Then pick the largest bit */
-      fragment_sizes |= fragment_sizes >> 1;
-      fragment_sizes |= fragment_sizes >> 2;
-      fragment_size = fragment_sizes ^ (fragment_sizes >> 1);
-      
-      /* We read fragments */
-      format |= fragment_size;
-   
-      /* Each operation reads this many bytes */
-      chunk = format & EB_DATAX;
-      count = complete_size / chunk;
-      
-      /* Read the low bits first */
-      switch (format & EB_ENDIAN_MASK) {
-      case EB_BIG_ENDIAN:
-        stride = chunk;
-        break;
-      case EB_LITTLE_ENDIAN:
-        address += chunk*(count-1);
-        stride = -chunk;
-        break;
-      default:
-		
 		if(VERBOSE_CALOE)
-			fprintf(stderr, "ERROR: Must know ENDIAN to fragment read \n");
-        
-        return ERROR_UNKNOWN_ENDIAN;
-      }
+			fprintf(stderr,"ERROR: Invalid read operation \n");
       
-      for (; count > 0; --count) {
-        
-        if (config)
-          eb_cycle_read_config(cycle, address, format, 0);
-        else
-          eb_cycle_read(cycle, address, format, 0);
-        address += stride;
-      }
-      
-      shift = 0;
-    } else {
-      eb_address_t aligned_address;
-      
-      /* All bits in read_sizes are larger than all bits in size */
-      /* We will need to do a larger operation than the read requested. */
-      
-      /* Pick the largest sized read possible. */
-      fragment_size = fragment_sizes ^ (fragment_sizes >> 1);
-      /* (the above code sets fragment_size = size, but works also if size were a mask) */
-      
-      /* Now pick the smallest bit in read_sizes. */
-      complete_size = read_sizes & -read_sizes;
-      
-      /* We have our final operation format. */
-      format |= complete_size;
+		return INVALID_OPERATION;
+	}
   
-      /* Align the address */
-      aligned_address = address & ~(eb_address_t)(complete_size-1);
-      
-      /* How far do we need to shift the offset? */
-      switch (format & EB_ENDIAN_MASK) {
-      case EB_BIG_ENDIAN:
-        shift = (complete_size-fragment_size) - (address - aligned_address);
-        break;
-      case EB_LITTLE_ENDIAN:
-        shift = (address - aligned_address);
-        break;
-      default:
-      
-		if(VERBOSE_CALOE)
-			fprintf(stderr, "ERROR: Must know ENDIAN to fill partial read \n");
-        
-        return ERROR_UNKNOWN_ENDIAN;
-      }
-      
-      /* Issue the read */
-      if (config)
-        eb_cycle_read_config(cycle, aligned_address, format, 0);
-      else
-        eb_cycle_read(cycle, aligned_address, format, 0);
-    }
-  } else {
-    /* There is a size requested that the device and link supports */
-    format |= (size & read_sizes);
-    
-    /* If the access it full width, an endian is needed. Print a friendlier message than EB_ADDRESS. */
-    if ((format & line_width & EB_DATAX) == 0 && (format & EB_ENDIAN_MASK) == 0) {
-		
-		if(VERBOSE_CALOE)
-			fprintf(stderr, "ERROR: ENDIAN is required \n");
-        
-        return ERROR_UNKNOWN_ENDIAN;
-    }
-    
-    if (config)
-      eb_cycle_read_config(cycle, address, format, 0);
-    else
-      eb_cycle_read(cycle, address, format, 0);
-    shift = 0;
-  }
+	eb_format_t size;
+	int attempts, probe, config;
+
+	address_width = EB_ADDRX;
+	data_width = EB_DATAX;
+	size = EB_DATAX;
+	endian = 0; /* auto-detect */
+	attempts = 3;
+	probe = 1;
+	config = access->is_config;
+	eb_address_t address = access->address + access->offset;
+
+	char * netaddress = (access->networkc).netaddress;
+	int port = ((access->networkc).port == NULL ? 60368 : *((access->networkc).port));
   
-  eb_cycle_close(cycle);
-    
-  stop = 0;
-  timeout = TIMEOUT_LIMIT;
+	char net[50];
   
-  while(timeout > 0) {
-	int telapsed = eb_socket_run(socket,timeout);
-	
-	if(stop)
+	sprintf(net,"%s/%d",netaddress,port);
+
+	switch(access->align) {
+		case SIZE_1B: size = 1;
 		break;
 
-	timeout -= telapsed;
-  }
+		case SIZE_2B: size = 2;
+		break;
+
+		case SIZE_4B: size = 4;
+		break;
+
+		case SIZE_8B: size = 8;
+		break;
+	}
   
-  if(!stop) {	
+	/* How big can the data be? */
+	mask = ~(eb_data_t)0;
+	mask >>= (sizeof(eb_data_t)-size)*8;
+
+	if ((status = eb_socket_open(EB_ABI_CODE, 0, address_width|data_width, &socket)) != EB_OK) {
 	
-	if(VERBOSE_CALOE)
-		fprintf(stderr, "ERROR: Timeout expired! \n");
+		if(VERBOSE_CALOE)
+			fprintf(stderr, "ERROR %d: Could not connect Etherbone socket \n",(int) status);
     
-    return ERROR_TIMEOUT;
-  }
+		return ERROR_OPEN_SOCKET;
+	}
   
-  data >>= shift*8;
-  data &= mask;
-  
-  if ((status = eb_device_close(device)) != EB_OK) {
+	if ((status = eb_device_open(socket, net, EB_ADDRX|EB_DATAX, attempts, &device)) != EB_OK) {
 	  
-	if(VERBOSE_CALOE)
-		fprintf(stderr, "ERROR %d: failed to close Etherbone device \n", (int) status);
+		if(VERBOSE_CALOE)
+			fprintf(stderr, "ERROR %d: Could not connect Etherbone device \n", (int) status);
     
-    return ERROR_CLOSE_DEVICE;
-  }
+		return ERROR_OPEN_DEVICE;
+	}
   
-  if ((status = eb_socket_close(socket)) != EB_OK) {
+	line_width = eb_device_width(device);
+	
+	if (probe) {
+   
+		struct sdb_device info;
+	
+		if ((status = eb_sdb_find_by_address(device, address, &info)) != EB_OK) {
+		
+			if(VERBOSE_CALOE)
+				fprintf(stderr, "ERROR %d: SDB scan failed! \n",(int) status);
+      
+			return ERROR_SDB_SCAN;
+		}
     
-    if(VERBOSE_CALOE)
-		fprintf(stderr, "ERROR %d: failed to close Etherbone socket \n", (int) status);
+		if ((info.bus_specific & SDB_WISHBONE_LITTLE_ENDIAN) != 0)
+			device_support = EB_LITTLE_ENDIAN;
+		else
+			device_support = EB_BIG_ENDIAN;
+		
+		device_support |= info.bus_specific & EB_DATAX;
+	} else {
+		device_support = endian | EB_DATAX;
+	}
+  
+	if (endian == 0) {
+		/* Select the probed endian. May still be 0 if device not found. */
+		endian = device_support & EB_ENDIAN_MASK;
+	}
+  
+	/* Final operation endian has been chosen. If 0 the access had better be a full data width access! */
+	format = endian;
+  
+	/* We need to pick the operation width we use.
+	* It must be supported both by the device and the line.
+	*/
+	line_widths = ((line_width & EB_DATAX) << 1) - 1; /* Link can support any access smaller than line_width */
+	read_sizes = line_widths & device_support;
     
-    return ERROR_CLOSE_SOCKET;
-  }
+	/* We cannot work with a device that requires larger access than we support */
+	if (read_sizes == 0) {
+	  
+		if(VERBOSE_CALOE)
+			fprintf(stderr, "ERROR: Device could not access with size requested \n");
+    
+		return ERROR_SIZE_NOT_SUPPORTED;
+	}
+  
+	/* Begin the cycle */
+	if ((status = eb_cycle_open(device, &stop, &read_callback_caloe, &cycle)) != EB_OK) {
+	  
+		if(VERBOSE_CALOE)
+			fprintf(stderr, "ERROR %d: Could not create a new Etherbone operation cycle \n",(int) status);
+    
+		return ERROR_OPEN_CYCLE;
+	}
+  
+	/* Can the operation be performed with fidelity? */
+	if ((size & read_sizes) == 0) {
+		eb_format_t fragment_sizes;
+		eb_format_t fragment_size;
+		eb_format_t complete_size;
+   
+		/* What will we do? Prefer to fragment if possible; reading is evil. */
+    
+		/* Fragmented reading is possible if there is a bit in read_sizes smaller than a bit in size */
+		fragment_sizes = size;
+		fragment_sizes |= fragment_sizes >> 1;
+		fragment_sizes |= fragment_sizes >> 2; /* Filled in all sizes under max */
+		
+		if ((fragment_sizes & read_sizes) != 0) {
+			int stride, chunk, count;
+      
+			/* We can do a fragmented read. Pick largest read possible. */
+			complete_size = fragment_sizes ^ (fragment_sizes >> 1); /* This many bytes to read */
+			/* (the above code sets complete_size = size, but works also if size were a mask) */
+      
+			/* Filter out only those which have a good read size */
+			fragment_sizes &= read_sizes;
+			/* Then pick the largest bit */
+			fragment_sizes |= fragment_sizes >> 1;
+			fragment_sizes |= fragment_sizes >> 2;
+			fragment_size = fragment_sizes ^ (fragment_sizes >> 1);
+      
+			/* We read fragments */
+			format |= fragment_size;
+   
+			/* Each operation reads this many bytes */
+			chunk = format & EB_DATAX;
+			count = complete_size / chunk;
+      
+			/* Read the low bits first */
+			switch (format & EB_ENDIAN_MASK) {
+				case EB_BIG_ENDIAN:
+					stride = chunk;
+				break;
+				case EB_LITTLE_ENDIAN:
+					address += chunk*(count-1);
+					stride = -chunk;
+				break;
+				default:
+					if(VERBOSE_CALOE)
+						fprintf(stderr, "ERROR: Must know ENDIAN to fragment read \n");
+					return ERROR_UNKNOWN_ENDIAN;
+			}
+      
+			for (; count > 0; --count) {
+        
+				if (config)
+					eb_cycle_read_config(cycle, address, format, 0);
+				else
+					eb_cycle_read(cycle, address, format, 0);
+				address += stride;
+			}
+      
+			shift = 0;
+		} else {
+			eb_address_t aligned_address;
+      
+			/* All bits in read_sizes are larger than all bits in size */
+			/* We will need to do a larger operation than the read requested. */
+      
+			/* Pick the largest sized read possible. */
+			fragment_size = fragment_sizes ^ (fragment_sizes >> 1);
+			/* (the above code sets fragment_size = size, but works also if size were a mask) */
+      
+			/* Now pick the smallest bit in read_sizes. */
+			complete_size = read_sizes & -read_sizes;
+      
+			/* We have our final operation format. */
+			format |= complete_size;
+  
+			/* Align the address */
+			aligned_address = address & ~(eb_address_t)(complete_size-1);
+      
+			/* How far do we need to shift the offset? */
+			switch (format & EB_ENDIAN_MASK) {
+				case EB_BIG_ENDIAN:
+					shift = (complete_size-fragment_size) - (address - aligned_address);
+				break;
+				case EB_LITTLE_ENDIAN:
+					shift = (address - aligned_address);
+				break;
+				default:
+					if(VERBOSE_CALOE)
+						fprintf(stderr, "ERROR: Must know ENDIAN to fill partial read \n");
+					return ERROR_UNKNOWN_ENDIAN;
+			}
+      
+			/* Issue the read */
+			if (config)
+				eb_cycle_read_config(cycle, aligned_address, format, 0);
+			else
+				eb_cycle_read(cycle, aligned_address, format, 0);
+		}
+	} else {
+		/* There is a size requested that the device and link supports */
+		format |= (size & read_sizes);
+    
+		/* If the access it full width, an endian is needed. Print a friendlier message than EB_ADDRESS. */
+		if ((format & line_width & EB_DATAX) == 0 && (format & EB_ENDIAN_MASK) == 0) {
+		
+			if(VERBOSE_CALOE)
+				fprintf(stderr, "ERROR: ENDIAN is required \n");
+        
+			return ERROR_UNKNOWN_ENDIAN;
+		}
+    
+		if (config)
+			eb_cycle_read_config(cycle, address, format, 0);
+		else
+			eb_cycle_read(cycle, address, format, 0);
+    
+		shift = 0;
+	}
+  
+	eb_cycle_close(cycle);
+    
+	stop = 0;
+	timeout = TIMEOUT_LIMIT;
+  
+	while(timeout > 0) {
+		int telapsed = eb_socket_run(socket,timeout);
+	
+		if(stop)
+			break;
 
- //printf("Mask: 0x%x\n",access->mask);
+		timeout -= telapsed;
+	}
+  
+	if(!stop) {	
+	
+		if(VERBOSE_CALOE)
+			fprintf(stderr, "ERROR: Timeout expired! \n");
+    
+		return ERROR_TIMEOUT;
+	}
+  
+	data >>= shift*8;
+	data &= mask;
+  
+	if ((status = eb_device_close(device)) != EB_OK) {
+	  
+		if(VERBOSE_CALOE)
+			fprintf(stderr, "ERROR %d: failed to close Etherbone device \n", (int) status);
+    
+		return ERROR_CLOSE_DEVICE;
+	}
+  
+	if ((status = eb_socket_close(socket)) != EB_OK) {
+    
+		if(VERBOSE_CALOE)
+			fprintf(stderr, "ERROR %d: failed to close Etherbone socket \n", (int) status);
+    
+		return ERROR_CLOSE_SOCKET;
+	}
 
-  if(access->mask_oper == MASK_OR) {
-	data = access->mask | data;
-	//printf("OR\n");
-  }
-  else {
-	data = access->mask & data;
-	//printf("AND\n");
-  }
+	//printf("Mask: 0x%x\n",access->mask);
 
-  access->value = data;
+	if(access->mask_oper == MASK_OR) {
+		data = access->mask | data;
+		//printf("OR\n");
+	}
+	else {
+		data = access->mask & data;
+		//printf("AND\n");
+	}
+
+	access->value = data;
+
+	//fprintf(stdout, "%0*"EB_DATA_FMT"\n", size*2, access->value);
+
+	//printf("READ IN 0x%x VALUE 0x%x \n\n",(unsigned int) address,(unsigned int) access->value);
 
 
-  //fprintf(stdout, "%0*"EB_DATA_FMT"\n", size*2, access->value);
-
-  //printf("READ IN 0x%x VALUE 0x%x \n\n",(unsigned int) address,(unsigned int) access->value);
-
-
-   return ALL_OK;
+	return ALL_OK;
 }
 
 // The code of this function is based on eb-write tool code (its comments has also been included)
@@ -773,348 +773,350 @@ int read_caloe(access_caloe * access) {
 
 int write_caloe(access_caloe * access) {
 
-  int stop;
+	int stop;
   
-  eb_width_t address_width, data_width;
-  eb_format_t endian;
+	eb_width_t address_width, data_width;
+	eb_format_t endian;
   
-  eb_socket_t socket;
-  eb_status_t status;
-  eb_device_t device;
-  eb_width_t line_width;
-  eb_format_t line_widths;
-  eb_format_t device_support;
-  eb_format_t write_sizes;
-  eb_format_t format;
-  eb_cycle_t cycle;
-  eb_data_t mask;
-  int shift, shift_step;
-  eb_address_t address_end;
-  eb_data_t data_mask, partial_data;
-  eb_data_t original_data;
-  eb_address_t aligned_address;
+	eb_socket_t socket;
+	eb_status_t status;
+	eb_device_t device;
+	eb_width_t line_width;
+	eb_format_t line_widths;
+	eb_format_t device_support;
+	eb_format_t write_sizes;
+	eb_format_t format;
+	eb_cycle_t cycle;
+	eb_data_t mask;
+	int shift, shift_step;
+	eb_address_t address_end;
+	eb_data_t data_mask, partial_data;
+	eb_data_t original_data;
+	eb_address_t aligned_address;
   
-  if(access->mode != WRITE) {
+	if(access->mode != WRITE) {
 	  
-	  if(VERBOSE_CALOE)
-		fprintf(stderr,"ERROR: Invalid write operation \n");
+		if(VERBOSE_CALOE)
+			fprintf(stderr,"ERROR: Invalid write operation \n");
       
-      return INVALID_OPERATION;
-  }
+		return INVALID_OPERATION;
+	}
   
-  eb_format_t size;
-  int attempts, probe, config;
+	eb_format_t size;
+	int attempts, probe, config;
 
-  /* Default arguments */
-  address_width = EB_ADDRX;
-  data_width = EB_DATAX;
-  size = EB_DATAX;
-  endian = 0; /* auto-detect */
-  attempts = 3;
-  probe = 1;
-  config = access->is_config;
-  eb_address_t address = access->address + access->offset;
-  eb_data_t data = access->value;
-  char * netaddress = access->networkc.netaddress;
-  int port = (access->networkc.port == NULL ? 60368 : *(access->networkc.port));
+	/* Default arguments */
+	address_width = EB_ADDRX;
+	data_width = EB_DATAX;
+	size = EB_DATAX;
+	endian = 0; /* auto-detect */
+	attempts = 3;
+	probe = 1;
+	config = access->is_config;
+	eb_address_t address = access->address + access->offset;
+	eb_data_t data = access->value;
+	char * netaddress = access->networkc.netaddress;
+	int port = (access->networkc.port == NULL ? 60368 : *(access->networkc.port));
 
-  int timeout;
+	int timeout;
   
-  char net[50];
+	char net[50];
   
-  sprintf(net,"%s/%d",netaddress,port);
+	sprintf(net,"%s/%d",netaddress,port);
 
-  //printf("Mask: 0x%x\n",access->mask);
+	//printf("Mask: 0x%x\n",access->mask);
 
-  if(access->mask_oper == MASK_OR) {
-	data = access->mask | data;
-	//printf("OR\n");
-  }
-  else {
-	data = access->mask & data;
-	//printf("AND\n");
-  }
+	if(access->mask_oper == MASK_OR) {
+		data = access->mask | data;
+		//printf("OR\n");
+	}
+	else {
+		data = access->mask & data;
+		//printf("AND\n");
+	}
 
-  switch(access->align) {
-	case SIZE_1B: size = 1;
-	break;
+	switch(access->align) {
+		case SIZE_1B: size = 1;
+		break;
 
-	case SIZE_2B: size = 2;
-	break;
+		case SIZE_2B: size = 2;
+		break;
 
-	case SIZE_4B: size = 4;
-	break;
+		case SIZE_4B: size = 4;
+		break;
 
-	case SIZE_8B: size = 8;
-	break;
-  }
+		case SIZE_8B: size = 8;
+		break;
+	}
   
-  /* How big can the data be? */
-  mask = ~(eb_data_t)0;
-  mask >>= (sizeof(eb_data_t)-size)*8;
+	/* How big can the data be? */
+	mask = ~(eb_data_t)0;
+	mask >>= (sizeof(eb_data_t)-size)*8;
 
-  if ((status = eb_socket_open(EB_ABI_CODE, 0, address_width|data_width, &socket)) != EB_OK) {
+	if ((status = eb_socket_open(EB_ABI_CODE, 0, address_width|data_width, &socket)) != EB_OK) {
 	  
-	if(VERBOSE_CALOE)
-		fprintf(stderr, "ERROR %d: Could not connect Etherbone socket \n", (int) status);
+		if(VERBOSE_CALOE)
+			fprintf(stderr, "ERROR %d: Could not connect Etherbone socket \n", (int) status);
     
-    return ERROR_OPEN_SOCKET;
-  }
+		return ERROR_OPEN_SOCKET;
+	}
   
-  if ((status = eb_device_open(socket, net, EB_ADDRX|EB_DATAX, attempts, &device)) != EB_OK) {
+	if ((status = eb_device_open(socket, net, EB_ADDRX|EB_DATAX, attempts, &device)) != EB_OK) {
 	  
-	if(VERBOSE_CALOE)
-		fprintf(stderr, "ERROR %d: Could not connect Etherbone device \n", (int) status);
+		if(VERBOSE_CALOE)
+			fprintf(stderr, "ERROR %d: Could not connect Etherbone device \n", (int) status);
     
-    return ERROR_OPEN_DEVICE;
-  }
+		return ERROR_OPEN_DEVICE;
+	}
   
-  line_width = eb_device_width(device);
+	line_width = eb_device_width(device);
  
-  if (probe) {
+	if (probe) {
    
-    struct sdb_device info;
-    if ((status = eb_sdb_find_by_address(device, address, &info)) != EB_OK) {
+		struct sdb_device info;
+		if ((status = eb_sdb_find_by_address(device, address, &info)) != EB_OK) {
 	  
-	  if(VERBOSE_CALOE)
-		fprintf(stderr, "ERROR %d: SDB scan failed! \n", (int) status);
+			if(VERBOSE_CALOE)
+				fprintf(stderr, "ERROR %d: SDB scan failed! \n", (int) status);
       
-      return ERROR_SDB_SCAN;
-    }
+			return ERROR_SDB_SCAN;
+		}
     
-    if ((info.bus_specific & SDB_WISHBONE_LITTLE_ENDIAN) != 0)
-      device_support = EB_LITTLE_ENDIAN;
-    else
-      device_support = EB_BIG_ENDIAN;
-    device_support |= info.bus_specific & EB_DATAX;
-  } else {
-    device_support = endian | EB_DATAX;
-  }
-  
-  if (endian == 0) {
-    /* Select the probed endian. May still be 0 if device not found. */
-    endian = device_support & EB_ENDIAN_MASK;
-  }
-  
-  /* Final operation endian has been chosen. If 0 the access had better be a full data width access! */
-  format = endian;
-  
-  /* We need to pick the operation width we use.
-   * It must be supported both by the device and the line.
-   */
-  line_widths = ((line_width & EB_DATAX) << 1) - 1; /* Link can support any access smaller than line_width */
-  write_sizes = line_widths & device_support;
+		if ((info.bus_specific & SDB_WISHBONE_LITTLE_ENDIAN) != 0)
+			device_support = EB_LITTLE_ENDIAN;
+		else
+			device_support = EB_BIG_ENDIAN;
     
-  /* We cannot work with a device that requires larger access than we support */
-  if (write_sizes == 0) {
+		device_support |= info.bus_specific & EB_DATAX;
+	} else {
+		device_support = endian | EB_DATAX;
+	}
+  
+	if (endian == 0) {
+		/* Select the probed endian. May still be 0 if device not found. */
+		endian = device_support & EB_ENDIAN_MASK;
+	}
+  
+	/* Final operation endian has been chosen. If 0 the access had better be a full data width access! */
+	format = endian;
+  
+	/* We need to pick the operation width we use.
+	* It must be supported both by the device and the line.
+	*/
+	line_widths = ((line_width & EB_DATAX) << 1) - 1; /* Link can support any access smaller than line_width */
+	write_sizes = line_widths & device_support;
+    
+	/* We cannot work with a device that requires larger access than we support */
+	if (write_sizes == 0) {
 	
-	if(VERBOSE_CALOE)
-		fprintf(stderr, "ERROR: Device could not access with size requested \n");
+		if(VERBOSE_CALOE)
+			fprintf(stderr, "ERROR: Device could not access with size requested \n");
     
-    return ERROR_SIZE_NOT_SUPPORTED;
-  }
+		return ERROR_SIZE_NOT_SUPPORTED;
+	}
   
-  /* Begin the cycle */
-  if ((status = eb_cycle_open(device, &stop, &write_callback_caloe, &cycle)) != EB_OK) {
+	/* Begin the cycle */
+	if ((status = eb_cycle_open(device, &stop, &write_callback_caloe, &cycle)) != EB_OK) {
 	  
-	if(VERBOSE_CALOE)
-		fprintf(stderr, "ERROR %d: Could not create a new Etherbone operation cycle \n",(int) status);
+		if(VERBOSE_CALOE)
+			fprintf(stderr, "ERROR %d: Could not create a new Etherbone operation cycle \n",(int) status);
     
-    return ERROR_OPEN_CYCLE;
-  }
+		return ERROR_OPEN_CYCLE;
+	}
 
-  /* Can the operation be performed with fidelity? */
-  if ((size & write_sizes) == 0) {
-    eb_format_t fragment_sizes;
-    eb_format_t fragment_size;
-    eb_format_t complete_size;
+	/* Can the operation be performed with fidelity? */
+	if ((size & write_sizes) == 0) {
+		eb_format_t fragment_sizes;
+		eb_format_t fragment_size;
+		eb_format_t complete_size;
     
-    /* What will we do? Prefer to fragment if possible; reading is evil. */
+		/* What will we do? Prefer to fragment if possible; reading is evil. */
     
-    /* Fragmented writing is possible if there is a bit in write_sizes smaller than a bit in size */
-    fragment_sizes = size;
-    fragment_sizes |= fragment_sizes >> 1;
-    fragment_sizes |= fragment_sizes >> 2; /* Filled in all sizes under max */
-    if ((fragment_sizes & write_sizes) != 0) {
+		/* Fragmented writing is possible if there is a bit in write_sizes smaller than a bit in size */
+		fragment_sizes = size;
+		fragment_sizes |= fragment_sizes >> 1;
+		fragment_sizes |= fragment_sizes >> 2; /* Filled in all sizes under max */
+		if ((fragment_sizes & write_sizes) != 0) {
       
-      /* We can do a fragmented write. Pick largest write possible. */
-      complete_size = fragment_sizes ^ (fragment_sizes >> 1); /* This many bytes to write */
-      /* (the above code sets complete_size = size, but works also if size were a mask) */
+			/* We can do a fragmented write. Pick largest write possible. */
+			complete_size = fragment_sizes ^ (fragment_sizes >> 1); /* This many bytes to write */
+			/* (the above code sets complete_size = size, but works also if size were a mask) */
       
-      /* Filter out only those which have a good write size */
-      fragment_sizes &= write_sizes;
-      /* Then pick the largest bit */
-      fragment_sizes |= fragment_sizes >> 1;
-      fragment_sizes |= fragment_sizes >> 2;
-      fragment_size = fragment_sizes ^ (fragment_sizes >> 1);
+			/* Filter out only those which have a good write size */
+			fragment_sizes &= write_sizes;
+			/* Then pick the largest bit */
+			fragment_sizes |= fragment_sizes >> 1;
+			fragment_sizes |= fragment_sizes >> 2;
+			fragment_size = fragment_sizes ^ (fragment_sizes >> 1);
       
-      /* We write fragments */
-      format |= fragment_size;
+			/* We write fragments */
+			format |= fragment_size;
       
-      switch (format & EB_ENDIAN_MASK) {
-      case EB_BIG_ENDIAN:
-        shift = (complete_size - fragment_size)*8;
-        shift_step = -fragment_size*8;
-        break;
-      case EB_LITTLE_ENDIAN:
-        shift = 0;
-        shift_step = fragment_size*8;
-        break;
-      default:
+			switch (format & EB_ENDIAN_MASK) {
+				case EB_BIG_ENDIAN:
+					shift = (complete_size - fragment_size)*8;
+					shift_step = -fragment_size*8;
+				break;
+				case EB_LITTLE_ENDIAN:
+					shift = 0;
+					shift_step = fragment_size*8;
+				break;
+				default:
       
-		if(VERBOSE_CALOE)
-			fprintf(stderr, "ERROR: Must know ENDIAN to fragment read \n");
+					if(VERBOSE_CALOE)
+						fprintf(stderr, "ERROR: Must know ENDIAN to fragment read \n");
         
-        return ERROR_UNKNOWN_ENDIAN;
-      }
+					return ERROR_UNKNOWN_ENDIAN;
+			}	
       
-      data_mask = ~(eb_data_t)0;
-      data_mask >>= (sizeof(eb_data_t)-fragment_size)*8;
+			data_mask = ~(eb_data_t)0;
+			data_mask >>= (sizeof(eb_data_t)-fragment_size)*8;
       
-      for (address_end = address + complete_size; address != address_end; address += fragment_size) {
-        partial_data = (data >> shift) & data_mask;
+			for (address_end = address + complete_size; address != address_end; address += fragment_size) {
+				partial_data = (data >> shift) & data_mask;
         
-        if (config)
-          eb_cycle_write_config(cycle, address, format, partial_data);
-        else
-          eb_cycle_write(cycle, address, format, partial_data);
-        shift += shift_step;
-      }
-    } else {
+				if (config)
+					eb_cycle_write_config(cycle, address, format, partial_data);
+				else
+					eb_cycle_write(cycle, address, format, partial_data);
+				shift += shift_step;
+			}
+		} else {
       
-      /* All bits in write_sizes are larger than all bits in size */
-      /* We will need to do a larger operation than the write requested. */
+			/* All bits in write_sizes are larger than all bits in size */
+			/* We will need to do a larger operation than the write requested. */
       
-      /* Pick the largest sized write possible. */
-      fragment_size = fragment_sizes ^ (fragment_sizes >> 1);
-      /* (the above code sets fragment_size = size, but works also if size were a mask) */
+			/* Pick the largest sized write possible. */
+			fragment_size = fragment_sizes ^ (fragment_sizes >> 1);
+			/* (the above code sets fragment_size = size, but works also if size were a mask) */
       
-      /* Now pick the smallest bit in write_sizes. */
-      complete_size = write_sizes & -write_sizes;
+			/* Now pick the smallest bit in write_sizes. */
+			complete_size = write_sizes & -write_sizes;
       
-      /* We have our final operation format. */
-      format |= complete_size;
+			/* We have our final operation format. */
+			format |= complete_size;
       
-      /* Align the address */
-      aligned_address = address & ~(eb_address_t)(complete_size-1);
+			/* Align the address */
+			aligned_address = address & ~(eb_address_t)(complete_size-1);
       
-      /* How far do we need to shift the offset? */
-      switch (format & EB_ENDIAN_MASK) {
-      case EB_BIG_ENDIAN:
-        shift = (complete_size-fragment_size) - (address - aligned_address);
-        break;
-      case EB_LITTLE_ENDIAN:
-        shift = (address - aligned_address);
-        break;
-      default:
+			/* How far do we need to shift the offset? */
+			switch (format & EB_ENDIAN_MASK) {
+				case EB_BIG_ENDIAN:
+					shift = (complete_size-fragment_size) - (address - aligned_address);
+				break;
+				case EB_LITTLE_ENDIAN:
+					shift = (address - aligned_address);
+				break;
+				default:
       
-		if(VERBOSE_CALOE)
-			fprintf(stderr, "ERROR: Must know ENDIAN to fill partial read \n");
+					if(VERBOSE_CALOE)
+						fprintf(stderr, "ERROR: Must know ENDIAN to fill partial read \n");
         
-        return ERROR_UNKNOWN_ENDIAN;
-      }
-      mask <<= shift*8;
-      data <<= shift*8;
+					return ERROR_UNKNOWN_ENDIAN;
+			}
+			
+			mask <<= shift*8;
+			data <<= shift*8;
       
-      /* Issue the read */
-      if (config)
-        eb_cycle_read_config(cycle, aligned_address, format, &original_data);
-      else
-        eb_cycle_read(cycle, aligned_address, format, &original_data);
+			/* Issue the read */
+			if (config)
+				eb_cycle_read_config(cycle, aligned_address, format, &original_data);
+			else
+				eb_cycle_read(cycle, aligned_address, format, &original_data);
       
-      eb_cycle_close(cycle);
+			eb_cycle_close(cycle);
       
-      stop = 0;
-      timeout = TIMEOUT_LIMIT;
+			stop = 0;
+			timeout = TIMEOUT_LIMIT;
       
-      while(timeout > 0) {
-		int telapsed = eb_socket_run(socket, TIMEOUT_LIMIT);
+			while(timeout > 0) {
+				int telapsed = eb_socket_run(socket, TIMEOUT_LIMIT);
 		
+				if(stop)
+					break;
+
+				timeout -= telapsed;
+			}
+	  
+
+			if(!stop) {	
+	
+				if(VERBOSE_CALOE)
+					fprintf(stderr, "ERROR: Timeout expired! \n");
+    
+				return ERROR_TIMEOUT;
+			}
+      
+			/* Restart the cycle */
+			eb_cycle_open(device, &stop, &write_callback_caloe, &cycle);
+      
+			/* Inject the data */
+			data |= original_data & ~mask;
+			if (config)
+				eb_cycle_write_config(cycle, aligned_address, format, data);
+			else
+				eb_cycle_write(cycle, aligned_address, format, data);
+		}
+	} else {
+		/* There is a size requested that the device and link supports */
+		format |= (size & write_sizes);
+    
+		/* If the access it full width, an endian is needed. Print a friendlier message than EB_ADDRESS. */
+		if ((format & line_width & EB_DATAX) == 0 && (format & EB_ENDIAN_MASK) == 0) {
+		
+			if(VERBOSE_CALOE)
+				fprintf(stderr, "ERROR: ENDIAN is required \n");
+        
+			return ERROR_UNKNOWN_ENDIAN;
+		}
+
+		if (config)
+			eb_cycle_write_config(cycle, address, format, data);
+		else
+			eb_cycle_write(cycle, address, format, data);
+	}
+  
+	eb_cycle_close(cycle);
+  
+	stop = 0;
+	timeout = TIMEOUT_LIMIT;
+  
+	while(timeout > 0) {
+		int telapsed = eb_socket_run(socket,timeout);
+	
 		if(stop)
 			break;
 
 		timeout -= telapsed;
-	 }
-	  
+	}
 
-  if(!stop) {	
+	if(!stop) {	
 	
-	if(VERBOSE_CALOE)
-		fprintf(stderr, "ERROR: Timeout expired! \n");
-    
-    return ERROR_TIMEOUT;
-  }
-      
-      /* Restart the cycle */
-      eb_cycle_open(device, &stop, &write_callback_caloe, &cycle);
-      
-      /* Inject the data */
-      data |= original_data & ~mask;
-      if (config)
-        eb_cycle_write_config(cycle, aligned_address, format, data);
-      else
-        eb_cycle_write(cycle, aligned_address, format, data);
-    }
-  } else {
-    /* There is a size requested that the device and link supports */
-    format |= (size & write_sizes);
-    
-    /* If the access it full width, an endian is needed. Print a friendlier message than EB_ADDRESS. */
-    if ((format & line_width & EB_DATAX) == 0 && (format & EB_ENDIAN_MASK) == 0) {
-		
 		if(VERBOSE_CALOE)
-			fprintf(stderr, "ERROR: ENDIAN is required \n");
-        
-        return ERROR_UNKNOWN_ENDIAN;
-    }
-
-    if (config)
-      eb_cycle_write_config(cycle, address, format, data);
-    else
-      eb_cycle_write(cycle, address, format, data);
-  }
-  
-  eb_cycle_close(cycle);
-  
-  stop = 0;
-  timeout = TIMEOUT_LIMIT;
-  
-  while(timeout > 0) {
-	int telapsed = eb_socket_run(socket,timeout);
-	
-	if(stop)
-		break;
-
-	timeout -= telapsed;
-  }
-
-  if(!stop) {	
-	
-	if(VERBOSE_CALOE)
-		fprintf(stderr, "ERROR %d: Timeout expired! \n",(int) status);
+			fprintf(stderr, "ERROR %d: Timeout expired! \n",(int) status);
     
-    return ERROR_TIMEOUT;
-  }
+		return ERROR_TIMEOUT;
+	}
   
-  if ((status = eb_device_close(device)) != EB_OK) {
+	if ((status = eb_device_close(device)) != EB_OK) {
     
-    if(VERBOSE_CALOE)
-		fprintf(stderr, "ERROR %d: failed to close Etherbone device \n",(int) status);
+		if(VERBOSE_CALOE)
+			fprintf(stderr, "ERROR %d: failed to close Etherbone device \n",(int) status);
     
-    return ERROR_CLOSE_DEVICE;
-  }
+		return ERROR_CLOSE_DEVICE;
+	}
   
-  if ((status = eb_socket_close(socket)) != EB_OK) {
+	if ((status = eb_socket_close(socket)) != EB_OK) {
     
-    if(VERBOSE_CALOE)
-		fprintf(stderr, "ERROR %d: failed to close Etherbone socket \n",(int) status);
+		if(VERBOSE_CALOE)
+			fprintf(stderr, "ERROR %d: failed to close Etherbone socket \n",(int) status);
     
-    return ERROR_CLOSE_SOCKET;
-  }
+		return ERROR_CLOSE_SOCKET;
+	}
 
-  //printf("WRITE IN 0x%x VALUE 0x%x \n\n",(unsigned int) address,(unsigned int) data);
+	//printf("WRITE IN 0x%x VALUE 0x%x \n\n",(unsigned int) address,(unsigned int) data);
 
-   return ALL_OK;
+	return ALL_OK;
 }
 
 int write_after_read_caloe(access_caloe * access) {
@@ -1156,109 +1158,109 @@ int write_after_read_caloe(access_caloe * access) {
 
 int scan_caloe(access_caloe * access) {
   
-  if(access->mode != SCAN) {
-	  if(VERBOSE_CALOE)
+	if(access->mode != SCAN) {
+		if(VERBOSE_CALOE)
 		fprintf(stderr,"ERROR: Invalid scan operation \n");
       
-      return INVALID_OPERATION;
-  }
+		return INVALID_OPERATION;
+	}
   
   
-  struct bus_record br;
-  eb_socket_t socket;
-  eb_status_t status;
-  eb_device_t device;
-  int verbose = 0;
+	struct bus_record br;
+	eb_socket_t socket;
+	eb_status_t status;
+	eb_device_t device;
+	int verbose = 0;
   
-  int attempts;
+	int attempts;
   
-  br.parent = 0;
-  br.i = -1;
-  br.stop = 0;
-  br.addr_first = 0;
-  br.addr_last = ~(eb_address_t)0;
+	br.parent = 0;
+	br.i = -1;
+	br.stop = 0;
+	br.addr_first = 0;
+	br.addr_last = ~(eb_address_t)0;
   
-  eb_width_t address_width = EB_ADDRX;
-  eb_width_t data_width = EB_DATAX;
-  attempts = 3;
+	eb_width_t address_width = EB_ADDRX;
+	eb_width_t data_width = EB_DATAX;
+	attempts = 3;
 
-  char * netaddress = access->networkc.netaddress;
+	char * netaddress = access->networkc.netaddress;
   
-  int port = (access->networkc.port == NULL ? 60368 : *(access->networkc.port));
+	int port = (access->networkc.port == NULL ? 60368 : *(access->networkc.port));
 
-  int timeout;
+	int timeout;
   
-  char net[50];
+	char net[50];
   
-  sprintf(net,"%s/%d",netaddress,port);
+	sprintf(net,"%s/%d",netaddress,port);
 
- if ((status = eb_socket_open(EB_ABI_CODE, 0, address_width|data_width, &socket)) != EB_OK) {
+	if ((status = eb_socket_open(EB_ABI_CODE, 0, address_width|data_width, &socket)) != EB_OK) {
 	
-	if(VERBOSE_CALOE)
-		fprintf(stderr, "ERROR %d: Could not connect Etherbone socket \n",status);
+		if(VERBOSE_CALOE)
+			fprintf(stderr, "ERROR %d: Could not connect Etherbone socket \n",status);
     
-    return ERROR_OPEN_SOCKET;
-  }
+		return ERROR_OPEN_SOCKET;
+	}
   
-  if ((status = eb_device_open(socket, net, EB_ADDRX|EB_DATAX, attempts, &device)) != EB_OK) { 
+	if ((status = eb_device_open(socket, net, EB_ADDRX|EB_DATAX, attempts, &device)) != EB_OK) { 
     
-    if(VERBOSE_CALOE)
-		fprintf(stderr, "ERROR: Could not connect Etherbone device \n");
+		if(VERBOSE_CALOE)
+			fprintf(stderr, "ERROR: Could not connect Etherbone device \n");
     
-    return ERROR_OPEN_DEVICE;
-  }
+		return ERROR_OPEN_DEVICE;
+	}
   
-  br.addr_last >>= (sizeof(eb_address_t) - (eb_device_width(device) >> 4))*8;
+	br.addr_last >>= (sizeof(eb_address_t) - (eb_device_width(device) >> 4))*8;
   
-  if ((status = eb_sdb_scan_root(device, &br, &scan_callback_caloe)) != EB_OK) {
+	if ((status = eb_sdb_scan_root(device, &br, &scan_callback_caloe)) != EB_OK) {
     
-    if(VERBOSE_CALOE)
-		fprintf(stderr, "ERROR: Failed to scan remote device: %s\n", eb_status(status));
+		if(VERBOSE_CALOE)
+			fprintf(stderr, "ERROR: Failed to scan remote device: %s\n", eb_status(status));
     
-    return ERROR_SDB_SCAN;
-  }
+		return ERROR_SDB_SCAN;
+	}
 
-  if (!verbose)
-    fprintf(stdout, "BusPath        VendorID         Product   BaseAddress(Hex)  Description\n");
+	if (!verbose)
+		fprintf(stdout, "BusPath        VendorID         Product   BaseAddress(Hex)  Description\n");
 
-  br.stop = 0;
-  timeout = TIMEOUT_LIMIT;  
+	br.stop = 0;
+	timeout = TIMEOUT_LIMIT;  
 
-  while (timeout > 0) {
-    int telapsed = eb_socket_run(socket,timeout);
+	while (timeout > 0) {
+		int telapsed = eb_socket_run(socket,timeout);
     
-    if(br.stop)
-	break;
+		if(br.stop)
+			break;
 
-    timeout -= telapsed;
-  }
+		timeout -= telapsed;
+	}
 
-  if(!br.stop) {	
+	if(!br.stop) {	
 	  
-	if(VERBOSE_CALOE)
-		fprintf(stderr, "ERROR: Timeout expired! \n");
+		if(VERBOSE_CALOE)
+			fprintf(stderr, "ERROR: Timeout expired! \n");
     
-    return ERROR_TIMEOUT;
-  }
+		return ERROR_TIMEOUT;
+	}
   
-  if ((status = eb_device_close(device)) != EB_OK) {
+	if ((status = eb_device_close(device)) != EB_OK) {
 	  
-	if(VERBOSE_CALOE)
-		fprintf(stderr, "ERROR: failed to close Etherbone device \n");
+		if(VERBOSE_CALOE)
+			fprintf(stderr, "ERROR: failed to close Etherbone device \n");
     
-    return ERROR_CLOSE_DEVICE;
-  }
+		return ERROR_CLOSE_DEVICE;
+	}
   
-  if ((status = eb_socket_close(socket)) != EB_OK) {
+	if ((status = eb_socket_close(socket)) != EB_OK) {
     
-    if(VERBOSE_CALOE)
-		fprintf(stderr, "ERROR: failed to close Etherbone socket \n");
+		if(VERBOSE_CALOE)
+			fprintf(stderr, "ERROR: failed to close Etherbone socket \n");
     
-    return ERROR_CLOSE_SOCKET;
-  }
+		return ERROR_CLOSE_SOCKET;
+	}
 	
 
-return ALL_OK;
+	return ALL_OK;
 }
 
 int execute_native_caloe(access_caloe * access) {
@@ -1383,43 +1385,43 @@ int execute_tools_caloe(access_caloe * access) {
 			break;
 	
 		default: 
-					close(pipefd[1]);
+			close(pipefd[1]);
 					
-					while ((nread = read(pipefd[0], &buffer[nbuf], 1024)) != 0) { nbuf += nread;}
+			while ((nread = read(pipefd[0], &buffer[nbuf], 1024)) != 0) { nbuf += nread;}
 	
-					buffer[nbuf] = 0;
+			buffer[nbuf] = 0;
 					
-					close(pipefd[0]);
+			close(pipefd[0]);
 		
-					died= wait(&status);
+			died= wait(&status);
 					
-					if(access->mode == READ || access->mode == READ_WRITE) {
-						sscanf(buffer,"%x",&v);
+			if(access->mode == READ || access->mode == READ_WRITE) {
+				sscanf(buffer,"%x",&v);
 						
-						if(mask_oper_aux == MASK_OR) {
-							access->value = v | mask_aux;
-						}
-						else {
-							access->value = v & mask_aux;
-						}
+				if(mask_oper_aux == MASK_OR) {
+					access->value = v | mask_aux;
+				}
+				else {
+					access->value = v & mask_aux;
+				}
 						
-						if(access->mode == READ_WRITE) {
-							access->mode = WRITE;
-							access->mask = 0x00;
-							access->mask_oper = MASK_OR;
-					
-							execute_tools_caloe(access);
+				if(access->mode == READ_WRITE) {
+					access->mode = WRITE;
+					access->mask = 0x00;
+					access->mask_oper = MASK_OR;
+				
+					execute_tools_caloe(access);
 							
-							access->mask = mask_aux;
-							access->mask_oper = mask_oper_aux;
-							access->mode = READ_WRITE;
-						}
-					}
-					else {
-						if(access->mode == SCAN)
-							fprintf(stderr,"%s\n",buffer);
-					}
-					break;
+					access->mask = mask_aux;
+					access->mask_oper = mask_oper_aux;
+					access->mode = READ_WRITE;
+				}
+			}
+			else {
+				if(access->mode == SCAN)
+					fprintf(stderr,"%s\n",buffer);
+			}
+			break;
      };
      
      return status;
